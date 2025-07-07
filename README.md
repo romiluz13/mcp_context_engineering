@@ -1,296 +1,437 @@
-# Context Engineering Template
+# 🚀 MCP Context Engineering Platform
 
-A comprehensive template for getting started with Context Engineering - the discipline of engineering context for AI coding assistants so they have the information necessary to get the job done end to end.
+## **The World's First Universal AI Context Intelligence System**
 
-> **Context Engineering is 10x better than prompt engineering and 100x better than vibe coding.**
+Transform static context management into **dynamic, intelligent, collaborative intelligence** that works with **ANY AI assistant**. This revolutionary platform replaces manual context folders with MongoDB-powered semantic search and adaptive pattern discovery.
 
-## 🚀 Quick Start
+### 🌟 **Revolutionary Breakthrough**
 
+**Before**: Static files, manual research, individual patterns
+**After**: Dynamic intelligence, automated assembly, collaborative learning
+
+**Universal Compatibility**: Cursor, VS Code Copilot, Claude Desktop, Windsurf, GitHub Copilot, and future AI assistants
+
+## ⚡ **Super Easy Installation**
+
+### **One-Line Install (Easiest)**
 ```bash
-# 1. Clone this template
-git clone https://github.com/coleam00/Context-Engineering-Intro.git
-cd Context-Engineering-Intro
-
-# 2. Set up your project rules (optional - template provided)
-# Edit CLAUDE.md to add your project-specific guidelines
-
-# 3. Add examples (highly recommended)
-# Place relevant code examples in the examples/ folder
-
-# 4. Create your initial feature request
-# Edit INITIAL.md with your feature requirements
-
-# 5. Generate a comprehensive PRP (Product Requirements Prompt)
-# In Claude Code, run:
-/generate-prp INITIAL.md
-
-# 6. Execute the PRP to implement your feature
-# In Claude Code, run:
-/execute-prp PRPs/your-feature-name.md
+curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh | bash
 ```
+
+### **Manual Install**
+```bash
+# 1. Install the MCP Context Engineering Platform
+npm install -g mcp-context-engineering
+
+# 2. Configure your MongoDB connection
+export MDB_MCP_CONNECTION_STRING="mongodb+srv://your-connection-string"
+export MDB_MCP_OPENAI_API_KEY="your-openai-api-key"
+
+# 3. Set up the database
+npm run setup-all
+
+# 4. Add to your AI assistant's MCP configuration
+# See configuration examples below
+
+# 5. Start using revolutionary context intelligence!
+# Your AI assistant now has access to:
+# - context-research: Intelligent pattern discovery
+# - context-assemble-prp: Dynamic implementation planning
+```
+
+## 🎯 **What This Revolutionary Platform Does**
+
+### **🔍 Intelligent Pattern Discovery**
+- **Semantic Search**: MongoDB vector search finds relevant patterns across your entire codebase history
+- **Success Rate Analysis**: AI learns from what works and what doesn't
+- **Technology Stack Matching**: Finds patterns specific to your tech stack
+- **Confidence Scoring**: Know how reliable each recommendation is
+
+### **📋 Dynamic PRP Generation**
+- **Context-Aware Planning**: Assembles implementation plans based on proven patterns
+- **Adaptive Complexity**: Adjusts recommendations based on project complexity
+- **Validation Loops**: Built-in testing and quality assurance strategies
+- **Anti-Pattern Detection**: Warns about common pitfalls and gotchas
+
+### **🤝 Universal AI Assistant Integration**
+- **MCP Protocol**: Works with any AI assistant that supports Model Context Protocol
+- **Zero Configuration**: Install once, works everywhere
+- **Real-time Intelligence**: Context updates dynamically as you work
+- **Collaborative Learning**: Patterns improve across all users and projects
 
 ## 📚 Table of Contents
 
-- [What is Context Engineering?](#what-is-context-engineering)
-- [Template Structure](#template-structure)
-- [Step-by-Step Guide](#step-by-step-guide)
-- [Writing Effective INITIAL.md Files](#writing-effective-initialmd-files)
-- [The PRP Workflow](#the-prp-workflow)
-- [Using Examples Effectively](#using-examples-effectively)
-- [Best Practices](#best-practices)
+- [Installation & Setup](#installation--setup)
+- [MCP Configuration](#mcp-configuration)
+- [Core Tools](#core-tools)
+- [Database Setup](#database-setup)
+- [Usage Examples](#usage-examples)
+- [Advanced Configuration](#advanced-configuration)
+- [Contributing](#contributing)
 
-## What is Context Engineering?
+## 🛠️ Installation & Setup
 
-Context Engineering represents a paradigm shift from traditional prompt engineering:
+### **Prerequisites**
+- Node.js 18+
+- MongoDB Atlas cluster (or local MongoDB)
+- OpenAI API key (for semantic search)
+- AI assistant with MCP support
 
-### Prompt Engineering vs Context Engineering
-
-**Prompt Engineering:**
-- Focuses on clever wording and specific phrasing
-- Limited to how you phrase a task
-- Like giving someone a sticky note
-
-**Context Engineering:**
-- A complete system for providing comprehensive context
-- Includes documentation, examples, rules, patterns, and validation
-- Like writing a full screenplay with all the details
-
-### Why Context Engineering Matters
-
-1. **Reduces AI Failures**: Most agent failures aren't model failures - they're context failures
-2. **Ensures Consistency**: AI follows your project patterns and conventions
-3. **Enables Complex Features**: AI can handle multi-step implementations with proper context
-4. **Self-Correcting**: Validation loops allow AI to fix its own mistakes
-
-## Template Structure
-
-```
-context-engineering-intro/
-├── .claude/
-│   ├── commands/
-│   │   ├── generate-prp.md    # Generates comprehensive PRPs
-│   │   └── execute-prp.md     # Executes PRPs to implement features
-│   └── settings.local.json    # Claude Code permissions
-├── PRPs/
-│   ├── templates/
-│   │   └── prp_base.md       # Base template for PRPs
-│   └── EXAMPLE_multi_agent_prp.md  # Example of a complete PRP
-├── examples/                  # Your code examples (critical!)
-├── CLAUDE.md                 # Global rules for AI assistant
-├── INITIAL.md               # Template for feature requests
-├── INITIAL_EXAMPLE.md       # Example feature request
-└── README.md                # This file
-```
-
-This template doesn't focus on RAG and tools with context engineering because I have a LOT more in store for that soon. ;)
-
-## Step-by-Step Guide
-
-### 1. Set Up Global Rules (CLAUDE.md)
-
-The `CLAUDE.md` file contains project-wide rules that the AI assistant will follow in every conversation. The template includes:
-
-- **Project awareness**: Reading planning docs, checking tasks
-- **Code structure**: File size limits, module organization
-- **Testing requirements**: Unit test patterns, coverage expectations
-- **Style conventions**: Language preferences, formatting rules
-- **Documentation standards**: Docstring formats, commenting practices
-
-**You can use the provided template as-is or customize it for your project.**
-
-### 2. Create Your Initial Feature Request
-
-Edit `INITIAL.md` to describe what you want to build:
-
-```markdown
-## FEATURE:
-[Describe what you want to build - be specific about functionality and requirements]
-
-## EXAMPLES:
-[List any example files in the examples/ folder and explain how they should be used]
-
-## DOCUMENTATION:
-[Include links to relevant documentation, APIs, or MCP server resources]
-
-## OTHER CONSIDERATIONS:
-[Mention any gotchas, specific requirements, or things AI assistants commonly miss]
-```
-
-**See `INITIAL_EXAMPLE.md` for a complete example.**
-
-### 3. Generate the PRP
-
-PRPs (Product Requirements Prompts) are comprehensive implementation blueprints that include:
-
-- Complete context and documentation
-- Implementation steps with validation
-- Error handling patterns
-- Test requirements
-
-They are similar to PRDs (Product Requirements Documents) but are crafted more specifically to instruct an AI coding assistant.
-
-Run in Claude Code:
+### **Global Installation**
 ```bash
-/generate-prp INITIAL.md
+npm install -g mcp-context-engineering
 ```
 
-**Note:** The slash commands are custom commands defined in `.claude/commands/`. You can view their implementation:
-- `.claude/commands/generate-prp.md` - See how it researches and creates PRPs
-- `.claude/commands/execute-prp.md` - See how it implements features from PRPs
+### **Environment Configuration**
+```bash
+# Required: MongoDB connection
+export MDB_MCP_CONNECTION_STRING="mongodb+srv://username:password@cluster.mongodb.net/"
 
-The `$ARGUMENTS` variable in these commands receives whatever you pass after the command name (e.g., `INITIAL.md` or `PRPs/your-feature.md`).
+# Optional: OpenAI API key for enhanced semantic search
+export MDB_MCP_OPENAI_API_KEY="sk-your-openai-api-key"
 
-This command will:
-1. Read your feature request
-2. Research the codebase for patterns
-3. Search for relevant documentation
-4. Create a comprehensive PRP in `PRPs/your-feature-name.md`
+# Alternative OpenAI key variable
+export OPENAI_API_KEY="sk-your-openai-api-key"
+```
 
-### 4. Execute the PRP
+### **Database Initialization**
+```bash
+# Set up collections and indexes
+mcp-context-engineering setup-db
 
-Once generated, execute the PRP to implement your feature:
+# Populate with universal AI rules and patterns
+mcp-context-engineering sample-data
+```
+
+## ⚙️ MCP Configuration
+
+Add this to your AI assistant's MCP configuration file:
+
+### **Cursor IDE**
+Add to `.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "mcp-context-engineering": {
+      "command": "npx",
+      "args": ["-y", "mcp-context-engineering"],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://username:password@cluster.mongodb.net/",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key"
+      }
+    }
+  }
+}
+```
+
+### **Claude Desktop**
+Add to `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "mcp-context-engineering": {
+      "command": "npx",
+      "args": ["-y", "mcp-context-engineering"],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://username:password@cluster.mongodb.net/",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key"
+      }
+    }
+  }
+}
+```
+
+### **VS Code with Copilot**
+Add to your MCP configuration:
+```json
+{
+  "mcpServers": {
+    "mcp-context-engineering": {
+      "command": "npx",
+      "args": ["-y", "mcp-context-engineering"],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://username:password@cluster.mongodb.net/",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key"
+      }
+    }
+  }
+}
+```
+
+## 🛠️ Core Tools
+
+### **🔍 context-research**
+Intelligent pattern and rule discovery using MongoDB semantic search.
+
+**Parameters:**
+- `feature_request` (required): The feature you want to implement
+- `technology_stack` (optional): Array of technologies (e.g., ["python", "fastapi", "mongodb"])
+- `success_rate_threshold` (optional): Minimum success rate for patterns (0.0-1.0, default: 0.7)
+- `max_results` (optional): Maximum results to return (1-50, default: 10)
+
+**Example:**
+```json
+{
+  "feature_request": "user authentication with JWT tokens",
+  "technology_stack": ["node.js", "express", "mongodb"],
+  "success_rate_threshold": 0.8,
+  "max_results": 15
+}
+```
+
+**Returns:**
+- Implementation patterns with success rates
+- Applicable project rules and constraints
+- Research insights and best practices
+- Confidence scoring and relevance analysis
+
+### **📋 context-assemble-prp**
+Dynamic PRP (Product Requirements Prompt) generation with intelligent context assembly.
+
+**Parameters:**
+- `feature_request` (required): The feature to implement
+- `research_results` (optional): Results from context-research tool
+- `complexity_level` (optional): "simple", "intermediate", or "advanced" (default: "intermediate")
+- `include_validation` (optional): Include testing strategies (default: true)
+
+**Example:**
+```json
+{
+  "feature_request": "user authentication with JWT tokens",
+  "research_results": { /* output from context-research */ },
+  "complexity_level": "intermediate",
+  "include_validation": true
+}
+```
+
+**Returns:**
+- Complete implementation blueprint
+- Step-by-step development phases
+- Testing and validation strategies
+- Anti-patterns and gotchas to avoid
+
+## 💡 Usage Examples
+
+### **Basic Workflow**
+```bash
+# 1. Research patterns for your feature
+AI: Use the context-research tool with:
+{
+  "feature_request": "real-time chat system",
+  "technology_stack": ["node.js", "socket.io", "mongodb"]
+}
+
+# 2. Generate implementation plan
+AI: Use the context-assemble-prp tool with the research results
+
+# 3. Follow the generated PRP to implement your feature
+```
+
+### **Advanced Research**
+```bash
+# High-confidence patterns only
+{
+  "feature_request": "microservices architecture",
+  "technology_stack": ["docker", "kubernetes", "node.js"],
+  "success_rate_threshold": 0.9,
+  "max_results": 5
+}
+```
+
+### **Complex Implementation Planning**
+```bash
+{
+  "feature_request": "distributed caching system",
+  "complexity_level": "advanced",
+  "include_validation": true
+}
+```
+
+## 🗄️ Database Setup
+
+### **Automatic Setup**
+```bash
+# Initialize database with collections and indexes
+mcp-context-engineering setup-db
+
+# Add universal AI rules and sample patterns
+mcp-context-engineering sample-data
+```
+
+### **Manual Setup**
+```javascript
+// Connect to your MongoDB instance
+const { MongoClient } = require('mongodb');
+
+// Collections created:
+// - project_rules: Universal AI rules and project-specific guidelines
+// - implementation_patterns: Proven code patterns with success rates
+// - prp_templates: Dynamic PRP generation templates
+// - research_knowledge: Curated research and best practices
+// - implementation_outcomes: Learning from successes and failures
+// - context_assemblies: Cached context for performance
+```
+
+## 🚀 Why This Is Revolutionary
+
+### **Traditional Context Engineering vs. Our Platform**
+
+**Traditional Approach:**
+- ❌ Static files and manual research
+- ❌ Individual patterns, no learning
+- ❌ Assistant-specific implementations
+- ❌ Manual context assembly
+
+**Our Revolutionary Platform:**
+- ✅ **Dynamic Intelligence**: MongoDB-powered semantic search
+- ✅ **Collaborative Learning**: Patterns improve across all users
+- ✅ **Universal Compatibility**: Works with any AI assistant via MCP
+- ✅ **Automated Assembly**: AI generates optimized implementation plans
+
+### **The Paradigm Shift**
+
+1. **From Static to Dynamic**: Context evolves and improves automatically
+2. **From Individual to Collaborative**: Learn from the entire community's successes
+3. **From Manual to Intelligent**: AI discovers patterns you never knew existed
+4. **From Assistant-Specific to Universal**: One platform, every AI assistant
+
+## 🏗️ Architecture
+
+### **System Components**
+```
+MCP Context Engineering Platform
+├── 🔍 context-research        # Intelligent pattern discovery
+├── 📋 context-assemble-prp    # Dynamic PRP generation
+├── 🗄️ MongoDB Collections     # Persistent knowledge base
+│   ├── project_rules         # Universal AI rules
+│   ├── implementation_patterns # Proven code patterns
+│   ├── prp_templates         # Dynamic templates
+│   ├── research_knowledge    # Curated insights
+│   └── context_assemblies    # Cached contexts
+└── 🤖 MCP Protocol           # Universal AI integration
+```
+
+### **Data Flow**
+1. **Research Phase**: AI queries MongoDB for relevant patterns
+2. **Analysis Phase**: Success rates and confidence scoring
+3. **Assembly Phase**: Dynamic PRP generation with proven templates
+4. **Learning Phase**: Implementation outcomes feed back into the system
+
+## 🔧 Advanced Configuration
+
+### **Custom Rules and Patterns**
+```javascript
+// Add your own implementation patterns
+db.implementation_patterns.insertOne({
+  pattern_id: "your_pattern_001",
+  pattern_name: "Your Custom Pattern",
+  pattern_type: "custom_integration",
+  description: "Your pattern description",
+  technology_stack: ["your", "tech", "stack"],
+  success_rate: 0.95,
+  implementation_time_hours: 6,
+  gotchas: ["Important gotcha 1", "Important gotcha 2"]
+});
+```
+
+### **Environment Variables**
+```bash
+# Required
+MDB_MCP_CONNECTION_STRING="mongodb+srv://..."
+
+# Optional - Enhanced semantic search
+MDB_MCP_OPENAI_API_KEY="sk-..."
+OPENAI_API_KEY="sk-..."
+
+# Optional - Custom database name
+MDB_MCP_DATABASE_NAME="context_engineering"
+
+# Optional - Logging
+MDB_MCP_LOG_LEVEL="info"
+```
+
+## 🤝 Contributing
+
+We're building the future of AI-assisted development! Here's how you can contribute:
+
+### **Add Universal Patterns**
+Share patterns that work across projects and technologies:
+```bash
+# Fork the repository
+git clone https://github.com/your-username/mcp-context-engineering.git
+
+# Add your patterns to the database
+# Submit a pull request with your improvements
+```
+
+### **Improve the AI Rules**
+Help us create better universal AI assistant rules:
+- Test with different AI assistants
+- Report what works and what doesn't
+- Suggest improvements to the rule system
+
+### **Extend the Platform**
+- Add new MCP tools
+- Improve semantic search algorithms
+- Enhance the PRP generation system
+
+## 📊 Performance & Scaling
+
+### **MongoDB Optimization**
+- Indexes on all search fields for sub-second queries
+- TTL indexes for automatic cache cleanup
+- Aggregation pipelines optimized for pattern matching
+
+### **Semantic Search**
+- OpenAI embeddings for enhanced relevance
+- Fallback to text search when embeddings unavailable
+- Confidence scoring combines multiple relevance factors
+
+### **Caching Strategy**
+- Context assemblies cached for 24 hours
+- Frequently accessed patterns prioritized
+- Automatic cache invalidation on pattern updates
+
+## 🛡️ Security & Privacy
+
+- **No Code Storage**: Only patterns and metadata, never your actual code
+- **Configurable Telemetry**: Full control over what data is shared
+- **Local Processing**: Sensitive operations happen locally
+- **Encrypted Connections**: All MongoDB connections use TLS
+
+## 📈 Roadmap
+
+### **Phase 1: Foundation** ✅
+- Core MCP server implementation
+- MongoDB integration
+- Basic pattern discovery
+
+### **Phase 2: Intelligence** 🚧
+- Advanced semantic search
+- Machine learning pattern scoring
+- Collaborative filtering
+
+### **Phase 3: Ecosystem** 🔮
+- Community pattern marketplace
+- Advanced analytics dashboard
+- Multi-language support
+
+## 📞 Support
+
+- **GitHub Issues**: [Report bugs and request features](https://github.com/context-engineering/mcp-context-engineering/issues)
+- **Discussions**: [Community discussions and Q&A](https://github.com/context-engineering/mcp-context-engineering/discussions)
+- **Documentation**: [Full documentation and guides](https://docs.context-engineering.dev)
+
+## 📄 License
+
+Apache 2.0 - See [LICENSE](LICENSE) for details.
+
+---
+
+**🚀 Ready to revolutionize your AI-assisted development?**
 
 ```bash
-/execute-prp PRPs/your-feature-name.md
+npm install -g mcp-context-engineering
 ```
 
-The AI coding assistant will:
-1. Read all context from the PRP
-2. Create a detailed implementation plan
-3. Execute each step with validation
-4. Run tests and fix any issues
-5. Ensure all success criteria are met
-
-## Writing Effective INITIAL.md Files
-
-### Key Sections Explained
-
-**FEATURE**: Be specific and comprehensive
-- ❌ "Build a web scraper"
-- ✅ "Build an async web scraper using BeautifulSoup that extracts product data from e-commerce sites, handles rate limiting, and stores results in PostgreSQL"
-
-**EXAMPLES**: Leverage the examples/ folder
-- Place relevant code patterns in `examples/`
-- Reference specific files and patterns to follow
-- Explain what aspects should be mimicked
-
-**DOCUMENTATION**: Include all relevant resources
-- API documentation URLs
-- Library guides
-- MCP server documentation
-- Database schemas
-
-**OTHER CONSIDERATIONS**: Capture important details
-- Authentication requirements
-- Rate limits or quotas
-- Common pitfalls
-- Performance requirements
-
-## The PRP Workflow
-
-### How /generate-prp Works
-
-The command follows this process:
-
-1. **Research Phase**
-   - Analyzes your codebase for patterns
-   - Searches for similar implementations
-   - Identifies conventions to follow
-
-2. **Documentation Gathering**
-   - Fetches relevant API docs
-   - Includes library documentation
-   - Adds gotchas and quirks
-
-3. **Blueprint Creation**
-   - Creates step-by-step implementation plan
-   - Includes validation gates
-   - Adds test requirements
-
-4. **Quality Check**
-   - Scores confidence level (1-10)
-   - Ensures all context is included
-
-### How /execute-prp Works
-
-1. **Load Context**: Reads the entire PRP
-2. **Plan**: Creates detailed task list using TodoWrite
-3. **Execute**: Implements each component
-4. **Validate**: Runs tests and linting
-5. **Iterate**: Fixes any issues found
-6. **Complete**: Ensures all requirements met
-
-See `PRPs/EXAMPLE_multi_agent_prp.md` for a complete example of what gets generated.
-
-## Using Examples Effectively
-
-The `examples/` folder is **critical** for success. AI coding assistants perform much better when they can see patterns to follow.
-
-### What to Include in Examples
-
-1. **Code Structure Patterns**
-   - How you organize modules
-   - Import conventions
-   - Class/function patterns
-
-2. **Testing Patterns**
-   - Test file structure
-   - Mocking approaches
-   - Assertion styles
-
-3. **Integration Patterns**
-   - API client implementations
-   - Database connections
-   - Authentication flows
-
-4. **CLI Patterns**
-   - Argument parsing
-   - Output formatting
-   - Error handling
-
-### Example Structure
-
-```
-examples/
-├── README.md           # Explains what each example demonstrates
-├── cli.py             # CLI implementation pattern
-├── agent/             # Agent architecture patterns
-│   ├── agent.py      # Agent creation pattern
-│   ├── tools.py      # Tool implementation pattern
-│   └── providers.py  # Multi-provider pattern
-└── tests/            # Testing patterns
-    ├── test_agent.py # Unit test patterns
-    └── conftest.py   # Pytest configuration
-```
-
-## Best Practices
-
-### 1. Be Explicit in INITIAL.md
-- Don't assume the AI knows your preferences
-- Include specific requirements and constraints
-- Reference examples liberally
-
-### 2. Provide Comprehensive Examples
-- More examples = better implementations
-- Show both what to do AND what not to do
-- Include error handling patterns
-
-### 3. Use Validation Gates
-- PRPs include test commands that must pass
-- AI will iterate until all validations succeed
-- This ensures working code on first try
-
-### 4. Leverage Documentation
-- Include official API docs
-- Add MCP server resources
-- Reference specific documentation sections
-
-### 5. Customize CLAUDE.md
-- Add your conventions
-- Include project-specific rules
-- Define coding standards
-
-## Resources
-
-- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
-- [Context Engineering Best Practices](https://www.philschmid.de/context-engineering)
+**Transform static context into dynamic intelligence today!**
