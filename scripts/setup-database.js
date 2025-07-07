@@ -1,20 +1,76 @@
 #!/usr/bin/env node
 
 /**
- * MongoDB Context Engineering Platform - Database Setup Script
- * 
- * Creates the 6 core collections with proper schemas and indexes
- * for the revolutionary context engineering platform.
+ * MongoDB Context Engineering Platform - Interactive Setup
+ *
+ * Beautiful, interactive setup experience that guides users through
+ * the complete MongoDB Atlas Vector Search configuration.
  */
 
 import { MongoClient } from 'mongodb';
+import readline from 'readline';
+import { promisify } from 'util';
 
-// Configuration from environment variables
-const config = {
-    connectionString: process.env.MDB_MCP_CONNECTION_STRING
-};
+// Create readline interface for interactive prompts
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const question = promisify(rl.question).bind(rl);
 
 const DATABASE_NAME = 'context_engineering';
+
+/**
+ * Interactive setup utilities
+ */
+function printBanner() {
+    console.clear();
+    console.log('\n🚀 ═══════════════════════════════════════════════════════════════════════════════');
+    console.log('   MONGODB CONTEXT ENGINEERING PLATFORM - INTERACTIVE SETUP');
+    console.log('   Transform static context into dynamic, intelligent, collaborative intelligence!');
+    console.log('═══════════════════════════════════════════════════════════════════════════════ 🚀\n');
+}
+
+function printStep(step, title, description) {
+    console.log(`\n📋 STEP ${step}: ${title}`);
+    console.log(`   ${description}\n`);
+}
+
+function printSuccess(message) {
+    console.log(`✅ ${message}`);
+}
+
+function printWarning(message) {
+    console.log(`⚠️  ${message}`);
+}
+
+function printError(message) {
+    console.log(`❌ ${message}`);
+}
+
+function printInfo(message) {
+    console.log(`ℹ️  ${message}`);
+}
+
+async function askQuestion(questionText, defaultValue = null) {
+    const prompt = defaultValue
+        ? `${questionText} (default: ${defaultValue}): `
+        : `${questionText}: `;
+
+    const answer = await question(prompt);
+    return answer.trim() || defaultValue;
+}
+
+async function askYesNo(questionText, defaultValue = 'y') {
+    const answer = await askQuestion(`${questionText} (y/n)`, defaultValue);
+    return answer.toLowerCase().startsWith('y');
+}
+
+function maskConnectionString(connectionString) {
+    if (!connectionString) return 'Not provided';
+    return connectionString.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
+}
 
 /**
  * Collection schemas and configurations
@@ -188,138 +244,286 @@ const VECTOR_SEARCH_INDEXES = {
 };
 
 async function setupDatabase() {
-    console.log('🚀 Setting up MongoDB Context Engineering Platform...\n');
-    
-    const connectionString = process.env.MONGODB_CONNECTION_STRING || 
-        process.env.MDB_MCP_CONNECTION_STRING ||
-        config.connectionString;
-    
+    printBanner();
+
+    console.log('Welcome to the revolutionary MongoDB Context Engineering Platform setup!');
+    console.log('This interactive wizard will guide you through creating a world-class');
+    console.log('AI context intelligence system powered by MongoDB Atlas Vector Search.\n');
+
+    // Step 1: Get MongoDB connection
+    printStep(1, 'MongoDB Atlas Connection', 'Let\'s connect to your MongoDB Atlas cluster');
+
+    let connectionString = process.env.MONGODB_CONNECTION_STRING ||
+        process.env.MDB_MCP_CONNECTION_STRING;
+
     if (!connectionString) {
-        console.error('❌ Error: MongoDB connection string not found!');
-        console.log('Please set one of these environment variables:');
-        console.log('  - MONGODB_CONNECTION_STRING');
-        console.log('  - MDB_MCP_CONNECTION_STRING');
-        console.log('  - Or configure connectionString in config');
-        process.exit(1);
+        console.log('🔗 I need your MongoDB Atlas connection string to continue.');
+        console.log('   You can find this in MongoDB Atlas → Connect → Connect your application\n');
+
+        connectionString = await askQuestion('Please enter your MongoDB Atlas connection string');
+
+        if (!connectionString) {
+            printError('MongoDB connection string is required to continue.');
+            console.log('\n📖 Need help? Visit: https://docs.atlas.mongodb.com/connect-to-cluster/');
+            process.exit(1);
+        }
+    } else {
+        printSuccess(`Found MongoDB connection string: ${maskConnectionString(connectionString)}`);
+
+        const useExisting = await askYesNo('Would you like to use this connection string?');
+        if (!useExisting) {
+            connectionString = await askQuestion('Please enter your MongoDB Atlas connection string');
+        }
     }
 
+    // Step 2: Test connection
+    printStep(2, 'Testing Connection', 'Verifying your MongoDB Atlas connection');
+
     const client = new MongoClient(connectionString);
-    
+
     try {
+        console.log('   🔄 Connecting to MongoDB Atlas...');
         await client.connect();
-        console.log('✅ Connected to MongoDB Atlas');
-        
+        printSuccess('Connected to MongoDB Atlas successfully!');
+
         const db = client.db(DATABASE_NAME);
+
+        // Test database access
+        console.log('   🔄 Testing database access...');
+        await db.admin().ping();
+        printSuccess(`Database access confirmed: ${DATABASE_NAME}`);
+
+        // Step 3: Explain what we'll create
+        printStep(3, 'Database Architecture', 'Understanding what we\'ll build for you');
+
+        console.log('🏗️  We\'ll create a revolutionary context engineering system with:');
+        console.log('   • 6 intelligent collections for different types of context');
+        console.log('   • Traditional indexes for lightning-fast queries');
+        console.log('   • Vector Search indexes with 2025 best practices');
+        console.log('   • Scalar quantization for optimal performance');
+        console.log('   • Hybrid search capabilities (semantic + traditional)');
+        console.log('   • Automatic cache management with TTL indexes\n');
+
+        const proceed = await askYesNo('Ready to create your revolutionary context intelligence system?');
+        if (!proceed) {
+            console.log('\n👋 Setup cancelled. Run this script again when you\'re ready!');
+            process.exit(0);
+        }
         
-        // Create collections
-        console.log('\n📁 Creating collections...');
+        // Step 4: Create collections
+        printStep(4, 'Creating Collections', 'Building the foundation of your context intelligence');
+
+        console.log('📁 Creating intelligent collections...\n');
+
+        let collectionsCreated = 0;
+        let collectionsExisted = 0;
+
         for (const [collectionName, config] of Object.entries(COLLECTIONS)) {
             try {
+                console.log(`   🔄 Creating ${collectionName}...`);
                 await db.createCollection(collectionName);
-                console.log(`  ✅ Created collection: ${collectionName}`);
-                console.log(`     ${config.description}`);
+                printSuccess(`Created collection: ${collectionName}`);
+                console.log(`      📝 ${config.description}`);
+                collectionsCreated++;
             } catch (error) {
                 if (error.code === 48) { // Collection already exists
-                    console.log(`  ℹ️  Collection already exists: ${collectionName}`);
+                    printInfo(`Collection already exists: ${collectionName}`);
+                    collectionsExisted++;
                 } else {
                     throw error;
                 }
             }
         }
+
+        console.log(`\n📊 Collections Summary:`);
+        console.log(`   • Created: ${collectionsCreated} new collections`);
+        console.log(`   • Existing: ${collectionsExisted} collections already existed`);
+        console.log(`   • Total: ${Object.keys(COLLECTIONS).length} collections ready\n`);
         
-        // Create indexes
-        console.log('\n🔍 Creating indexes...');
+        // Step 5: Create traditional indexes
+        printStep(5, 'Performance Indexes', 'Creating traditional indexes for lightning-fast queries');
+
+        console.log('🔍 Creating performance-optimized indexes...\n');
+
+        let indexesCreated = 0;
+        let indexesExisted = 0;
+
         for (const [collectionName, config] of Object.entries(COLLECTIONS)) {
+            console.log(`   📋 Processing ${collectionName}...`);
             const collection = db.collection(collectionName);
-            
+
             for (const indexSpec of config.indexes) {
                 try {
                     const indexName = await collection.createIndex(indexSpec.key, indexSpec.options || {});
-                    console.log(`  ✅ Created index on ${collectionName}: ${JSON.stringify(indexSpec.key)}`);
+                    console.log(`      ✅ Index: ${JSON.stringify(indexSpec.key)}`);
+                    indexesCreated++;
                 } catch (error) {
                     if (error.code === 85) { // Index already exists
-                        console.log(`  ℹ️  Index already exists on ${collectionName}: ${JSON.stringify(indexSpec.key)}`);
+                        console.log(`      ℹ️  Index exists: ${JSON.stringify(indexSpec.key)}`);
+                        indexesExisted++;
                     } else {
-                        console.log(`  ⚠️  Warning: Could not create index on ${collectionName}: ${error.message}`);
+                        printWarning(`Could not create index on ${collectionName}: ${error.message}`);
                     }
                 }
             }
         }
+
+        console.log(`\n📊 Indexes Summary:`);
+        console.log(`   • Created: ${indexesCreated} new indexes`);
+        console.log(`   • Existing: ${indexesExisted} indexes already existed`);
+        console.log(`   • Performance: Optimized for fast queries\n`);
         
-        // Create Vector Search indexes (2025 MongoDB best practices)
-        console.log('\n🚀 Creating Vector Search indexes (2025 best practices)...');
-        console.log('   Using latest MongoDB Atlas Vector Search features:');
-        console.log('   • Scalar quantization for optimal performance');
-        console.log('   • Cosine similarity for text embeddings');
-        console.log('   • 1536 dimensions (OpenAI text-embedding-3-small)');
-        console.log('   • Advanced filtering capabilities\n');
+        // Step 6: Vector Search indexes
+        printStep(6, 'Vector Search Intelligence', 'Creating revolutionary AI-powered search capabilities');
 
-        for (const [collectionName, indexConfig] of Object.entries(VECTOR_SEARCH_INDEXES)) {
-            try {
-                const collection = db.collection(collectionName);
+        console.log('🚀 This is where the magic happens! We\'ll create Vector Search indexes with:');
+        console.log('   • 🧠 Semantic similarity search using AI embeddings');
+        console.log('   • ⚡ Scalar quantization (75% memory reduction, 2-4x speed)');
+        console.log('   • 🎯 Cosine similarity (optimal for text embeddings)');
+        console.log('   • 📐 1536 dimensions (OpenAI text-embedding-3-small)');
+        console.log('   • 🔍 Advanced filtering for hybrid search');
+        console.log('   • 🌟 2025 MongoDB best practices\n');
 
-                // Use the latest createSearchIndex method (MongoDB Driver 6.6.0+)
-                await collection.createSearchIndex({
-                    name: indexConfig.name,
-                    type: "vectorSearch",
-                    definition: indexConfig.definition
-                });
-
-                console.log(`  ✅ Created Vector Search index: ${indexConfig.name} on ${collectionName}`);
-                console.log(`     • Vector field: embedding (1536 dimensions)`);
-                console.log(`     • Similarity: cosine with scalar quantization`);
-                console.log(`     • Filters: ${indexConfig.definition.fields.filter(f => f.type === 'filter').length} filter fields`);
-
-            } catch (error) {
-                if (error.message.includes('already exists') || error.message.includes('duplicate')) {
-                    console.log(`  ℹ️  Vector Search index already exists: ${indexConfig.name}`);
-                } else if (error.message.includes('not supported') || error.message.includes('Atlas')) {
-                    console.log(`  ⚠️  Vector Search requires MongoDB Atlas - skipping ${indexConfig.name}`);
-                    console.log(`     Manual creation required in Atlas UI for: ${collectionName}`);
-                } else {
-                    console.log(`  ⚠️  Could not create Vector Search index ${indexConfig.name}: ${error.message}`);
-                    console.log(`     This may require manual creation in MongoDB Atlas UI`);
-                }
-            }
+        const createVectorIndexes = await askYesNo('Ready to create revolutionary Vector Search indexes?');
+        if (!createVectorIndexes) {
+            printWarning('Skipping Vector Search indexes. You can create them later manually.');
+            console.log('   📖 Guide: https://docs.atlas.mongodb.com/atlas-vector-search/create-index/\n');
+        } else {
+            console.log('🔮 Creating Vector Search indexes...\n');
         }
 
-        console.log('\n📋 Vector Search Index Summary:');
-        console.log('   If any indexes failed to create automatically, you can create them manually:');
-        console.log('   1. Go to MongoDB Atlas → Your Cluster → Search');
-        console.log('   2. Create Search Index → Vector Search');
-        console.log('   3. Use the index definitions from this script');
-        console.log('   📖 Documentation: https://docs.atlas.mongodb.com/atlas-vector-search/create-index/');
-        
-        console.log('\n🎉 MongoDB Context Engineering Platform Setup Complete!');
-        console.log('');
-        console.log('📊 Database Configuration:');
+        if (createVectorIndexes) {
+            let vectorIndexesCreated = 0;
+            let vectorIndexesExisted = 0;
+            let vectorIndexesFailed = 0;
+
+            for (const [collectionName, indexConfig] of Object.entries(VECTOR_SEARCH_INDEXES)) {
+                try {
+                    console.log(`   🔮 Creating Vector Search for ${collectionName}...`);
+                    const collection = db.collection(collectionName);
+
+                    // Use the latest createSearchIndex method (MongoDB Driver 6.6.0+)
+                    await collection.createSearchIndex({
+                        name: indexConfig.name,
+                        type: "vectorSearch",
+                        definition: indexConfig.definition
+                    });
+
+                    printSuccess(`Vector Search index: ${indexConfig.name}`);
+                    console.log(`      🧠 Vector field: embedding (1536 dimensions)`);
+                    console.log(`      ⚡ Similarity: cosine with scalar quantization`);
+                    console.log(`      🔍 Filters: ${indexConfig.definition.fields.filter(f => f.type === 'filter').length} filter fields`);
+                    vectorIndexesCreated++;
+
+                } catch (error) {
+                    if (error.message.includes('already exists') || error.message.includes('duplicate')) {
+                        printInfo(`Vector Search index already exists: ${indexConfig.name}`);
+                        vectorIndexesExisted++;
+                    } else if (error.message.includes('not supported') || error.message.includes('Atlas')) {
+                        printWarning(`Vector Search requires MongoDB Atlas - skipping ${indexConfig.name}`);
+                        console.log(`      📋 Manual creation required in Atlas UI for: ${collectionName}`);
+                        vectorIndexesFailed++;
+                    } else {
+                        printWarning(`Could not create Vector Search index ${indexConfig.name}: ${error.message}`);
+                        console.log(`      📋 This may require manual creation in MongoDB Atlas UI`);
+                        vectorIndexesFailed++;
+                    }
+                }
+            }
+
+            console.log(`\n📊 Vector Search Summary:`);
+            console.log(`   • Created: ${vectorIndexesCreated} new Vector Search indexes`);
+            console.log(`   • Existing: ${vectorIndexesExisted} indexes already existed`);
+            if (vectorIndexesFailed > 0) {
+                console.log(`   • Manual setup needed: ${vectorIndexesFailed} indexes`);
+            }
+            console.log(`   • AI Intelligence: Ready for semantic search! 🧠\n`);
+        }
+
+        // Step 7: Completion and next steps
+        printStep(7, 'Setup Complete!', 'Your revolutionary context intelligence system is ready');
+
+        console.log('🎉 ═══════════════════════════════════════════════════════════════════════════════');
+        console.log('   CONGRATULATIONS! YOUR MONGODB CONTEXT ENGINEERING PLATFORM IS READY!');
+        console.log('═══════════════════════════════════════════════════════════════════════════════ 🎉\n');
+
+        console.log('📊 What we built for you:');
+        console.log(`   • 🗄️  Database: ${DATABASE_NAME}`);
+        console.log(`   • 📁 Collections: ${Object.keys(COLLECTIONS).length} intelligent collections`);
+        console.log(`   • ⚡ Performance Indexes: Lightning-fast traditional queries`);
+        console.log(`   • 🧠 Vector Search Indexes: AI-powered semantic search`);
+        console.log(`   • 🔍 Hybrid Search: Best of both worlds`);
+        console.log(`   • 🌟 2025 Best Practices: Production-ready architecture\n`);
+
+        console.log('🚀 Revolutionary capabilities now available:');
+        console.log('   • 🎯 Semantic similarity search with OpenAI embeddings');
+        console.log('   • ⚡ 75% memory reduction with scalar quantization');
+        console.log('   • 🔍 Advanced filtering and hybrid search');
+        console.log('   • 🤝 Collaborative learning and pattern recognition');
+        console.log('   • 📈 Continuous improvement from every interaction\n');
+
+        console.log('🔗 Your setup details:');
+        console.log(`   • Atlas Cluster: ${maskConnectionString(connectionString)}`);
         console.log(`   • Database: ${DATABASE_NAME}`);
-        console.log(`   • Collections: ${Object.keys(COLLECTIONS).length} created`);
-        console.log(`   • Traditional Indexes: Performance optimized`);
-        console.log(`   • Vector Search Indexes: 2025 best practices applied`);
-        console.log('');
-        console.log('🚀 Revolutionary Features Enabled:');
-        console.log('   • Semantic similarity search with OpenAI embeddings');
-        console.log('   • Scalar quantization for optimal performance');
-        console.log('   • Advanced filtering and hybrid search capabilities');
-        console.log('   • Collaborative learning and pattern recognition');
-        console.log('');
-        console.log('🔗 Connection Details:');
-        console.log(`   • Atlas Cluster: ${connectionString.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}`);
-        console.log('   • Ready for MCP Context Engineering Platform!');
-        console.log('');
-        console.log('🎯 Next Steps:');
-        console.log('   1. Run: mcp-context-engineering generate-sample-data');
-        console.log('   2. Configure your AI assistant with MCP server');
-        console.log('   3. Start using revolutionary context intelligence!');
-        console.log('');
-        console.log('🌟 Welcome to the future of AI-assisted development! 🌟');
+        console.log('   • Status: Ready for revolutionary context intelligence!\n');
+
+        // Ask about next steps
+        console.log('🎯 Ready for the next steps?');
+        console.log('   1. 📊 Generate sample data with real AI embeddings');
+        console.log('   2. ⚙️  Configure your AI assistant (Claude, Cursor, VS Code, etc.)');
+        console.log('   3. 🚀 Start using revolutionary context intelligence!\n');
+
+        const generateSampleData = await askYesNo('Would you like to generate sample data now?');
+        if (generateSampleData) {
+            console.log('\n🔄 Great! Run this command to generate sample data:');
+            console.log('   mcp-context-engineering generate-sample-data\n');
+        }
+
+        const showConfigHelp = await askYesNo('Would you like to see AI assistant configuration help?');
+        if (showConfigHelp) {
+            console.log('\n⚙️  AI Assistant Configuration:');
+            console.log('   📁 Configuration examples: examples/mcp-configs/');
+            console.log('   📖 Full guide: README.md');
+            console.log('   🔗 Repository: https://github.com/romiluz13/mcp_context_engineering\n');
+        }
+
+        console.log('🌟 ═══════════════════════════════════════════════════════════════════════════════');
+        console.log('   WELCOME TO THE FUTURE OF AI-ASSISTED DEVELOPMENT!');
+        console.log('   Your revolutionary context intelligence system is ready to transform');
+        console.log('   how you work with AI assistants. Enjoy the magic! ✨');
+        console.log('═══════════════════════════════════════════════════════════════════════════════ 🌟');
         
     } catch (error) {
-        console.error('❌ Database setup failed:', error.message);
+        console.log('\n💥 ═══════════════════════════════════════════════════════════════════════════════');
+        console.log('   SETUP ENCOUNTERED AN ISSUE');
+        console.log('═══════════════════════════════════════════════════════════════════════════════ 💥\n');
+
+        printError(`Setup failed: ${error.message}`);
+
+        console.log('\n🔧 Troubleshooting help:');
+        if (error.message.includes('authentication')) {
+            console.log('   • Check your MongoDB Atlas connection string');
+            console.log('   • Verify username and password are correct');
+            console.log('   • Ensure your IP address is whitelisted in Atlas');
+        } else if (error.message.includes('network')) {
+            console.log('   • Check your internet connection');
+            console.log('   • Verify MongoDB Atlas cluster is running');
+            console.log('   • Try again in a few moments');
+        } else {
+            console.log('   • Check the error message above for details');
+            console.log('   • Verify your MongoDB Atlas setup');
+            console.log('   • Contact support if the issue persists');
+        }
+
+        console.log('\n📖 Need help?');
+        console.log('   • Documentation: https://github.com/romiluz13/mcp_context_engineering');
+        console.log('   • MongoDB Atlas: https://docs.atlas.mongodb.com/');
+        console.log('   • Issues: https://github.com/romiluz13/mcp_context_engineering/issues');
+
         process.exit(1);
     } finally {
         await client.close();
+        rl.close();
     }
 }
 

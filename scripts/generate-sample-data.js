@@ -1,14 +1,24 @@
 #!/usr/bin/env node
 
 /**
- * MongoDB Context Engineering Platform - Sample Data Generator
- * 
- * Generates sample implementation patterns and research knowledge
- * for testing the context engineering platform.
+ * MongoDB Context Engineering Platform - Interactive Sample Data Generator
+ *
+ * Beautiful, interactive experience for generating sample data with real
+ * OpenAI embeddings to test the revolutionary context engineering platform.
  */
 
 import { MongoClient } from 'mongodb';
 import OpenAI from 'openai';
+import readline from 'readline';
+import { promisify } from 'util';
+
+// Create readline interface for interactive prompts
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const question = promisify(rl.question).bind(rl);
 
 // Configuration from environment variables
 const config = {
@@ -17,6 +27,52 @@ const config = {
 };
 
 const DATABASE_NAME = 'context_engineering';
+
+/**
+ * Interactive utilities
+ */
+function printBanner() {
+    console.clear();
+    console.log('\n🧠 ═══════════════════════════════════════════════════════════════════════════════');
+    console.log('   MONGODB CONTEXT ENGINEERING - SAMPLE DATA GENERATOR');
+    console.log('   Generate intelligent sample data with real OpenAI embeddings!');
+    console.log('═══════════════════════════════════════════════════════════════════════════════ 🧠\n');
+}
+
+function printStep(step, title, description) {
+    console.log(`\n📋 STEP ${step}: ${title}`);
+    console.log(`   ${description}\n`);
+}
+
+function printSuccess(message) {
+    console.log(`✅ ${message}`);
+}
+
+function printWarning(message) {
+    console.log(`⚠️  ${message}`);
+}
+
+function printError(message) {
+    console.log(`❌ ${message}`);
+}
+
+function printInfo(message) {
+    console.log(`ℹ️  ${message}`);
+}
+
+async function askQuestion(questionText, defaultValue = null) {
+    const prompt = defaultValue
+        ? `${questionText} (default: ${defaultValue}): `
+        : `${questionText}: `;
+
+    const answer = await question(prompt);
+    return answer.trim() || defaultValue;
+}
+
+async function askYesNo(questionText, defaultValue = 'y') {
+    const answer = await askQuestion(`${questionText} (y/n)`, defaultValue);
+    return answer.toLowerCase().startsWith('y');
+}
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -211,27 +267,73 @@ const SAMPLE_RESEARCH = [
  * Generate sample data
  */
 async function generateSampleData() {
-    console.log('🎲 Generating sample data for testing...\n');
-    
-    const connectionString = process.env.MONGODB_CONNECTION_STRING || 
+    printBanner();
+
+    console.log('Welcome to the intelligent sample data generator!');
+    console.log('This will create realistic sample data with real OpenAI embeddings');
+    console.log('to test your revolutionary context engineering platform.\n');
+
+    // Step 1: Check connections
+    printStep(1, 'Environment Check', 'Verifying MongoDB and OpenAI connections');
+
+    const connectionString = process.env.MONGODB_CONNECTION_STRING ||
         process.env.MDB_MCP_CONNECTION_STRING ||
         config.connectionString;
-    
+
     if (!connectionString) {
-        console.error('❌ Error: MongoDB connection string not found!');
+        printError('MongoDB connection string not found!');
+        console.log('   Please set MDB_MCP_CONNECTION_STRING environment variable');
+        console.log('   Example: export MDB_MCP_CONNECTION_STRING="mongodb+srv://..."');
         process.exit(1);
+    }
+    printSuccess('MongoDB connection string found');
+
+    const openaiApiKey = process.env.OPENAI_API_KEY || process.env.MDB_MCP_OPENAI_API_KEY;
+    if (!openaiApiKey) {
+        printError('OpenAI API key not found!');
+        console.log('   Please set MDB_MCP_OPENAI_API_KEY environment variable');
+        console.log('   Example: export MDB_MCP_OPENAI_API_KEY="sk-..."');
+        process.exit(1);
+    }
+    printSuccess('OpenAI API key found');
+
+    // Step 2: Explain what we'll generate
+    printStep(2, 'Sample Data Overview', 'Understanding what we\'ll create for you');
+
+    console.log('🎲 We\'ll generate intelligent sample data including:');
+    console.log('   • 📋 Implementation patterns with success metrics');
+    console.log('   • 📚 Research knowledge with validation status');
+    console.log('   • 🧠 Real OpenAI embeddings for semantic search');
+    console.log('   • 🔍 Filter fields for hybrid search testing');
+    console.log('   • 📊 Realistic usage statistics and confidence scores\n');
+
+    const proceed = await askYesNo('Ready to generate revolutionary sample data?');
+    if (!proceed) {
+        console.log('\n👋 Sample data generation cancelled. Run this script again when ready!');
+        process.exit(0);
     }
 
     const client = new MongoClient(connectionString);
     
     try {
+        // Step 3: Connect to database
+        printStep(3, 'Database Connection', 'Connecting to your MongoDB Atlas cluster');
+
+        console.log('   🔄 Connecting to MongoDB Atlas...');
         await client.connect();
-        console.log('✅ Connected to MongoDB Atlas');
-        
+        printSuccess('Connected to MongoDB Atlas successfully!');
+
         const db = client.db(DATABASE_NAME);
-        
-        // Generate implementation patterns
-        console.log('\n🔧 Generating implementation patterns...');
+
+        // Test database access
+        console.log('   🔄 Testing database access...');
+        await db.admin().ping();
+        printSuccess(`Database access confirmed: ${DATABASE_NAME}`);
+
+        // Step 4: Generate implementation patterns
+        printStep(4, 'Implementation Patterns', 'Creating intelligent patterns with real embeddings');
+
+        console.log('🔧 Generating implementation patterns with AI embeddings...');
         const patternsCollection = db.collection('implementation_patterns');
         
         for (const pattern of SAMPLE_PATTERNS) {
