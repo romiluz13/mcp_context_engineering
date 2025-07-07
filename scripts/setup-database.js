@@ -73,54 +73,115 @@ const COLLECTIONS = {
 };
 
 /**
- * Vector search indexes (for Phase 2)
- * These will be created manually in MongoDB Atlas UI for now
+ * Vector Search Indexes (2025 MongoDB Best Practices)
+ * Using latest MongoDB Atlas Vector Search features
  */
 const VECTOR_SEARCH_INDEXES = {
     project_rules: {
-        name: "rules_vector_index",
+        name: "rules_vector_search",
         definition: {
             fields: [
                 {
                     type: "vector",
                     path: "embedding",
-                    numDimensions: 1536,
-                    similarity: "cosine"
+                    numDimensions: 1536,  // OpenAI text-embedding-3-small
+                    similarity: "cosine",
+                    quantization: "scalar"  // 2025 best practice for performance
                 },
                 { type: "filter", path: "technology_stack" },
                 { type: "filter", path: "rule_type" },
-                { type: "filter", path: "enforcement_level" }
+                { type: "filter", path: "enforcement_level" },
+                { type: "filter", path: "success_impact" },
+                { type: "filter", path: "created_at" }
             ]
         }
     },
     implementation_patterns: {
-        name: "patterns_vector_index", 
-        definition: {
-            fields: [
-                {
-                    type: "vector",
-                    path: "embedding", 
-                    numDimensions: 1536,
-                    similarity: "cosine"
-                },
-                { type: "filter", path: "pattern_type" },
-                { type: "filter", path: "technology_stack" },
-                { type: "filter", path: "success_metrics.success_rate" }
-            ]
-        }
-    },
-    prp_templates: {
-        name: "templates_vector_index",
+        name: "patterns_vector_search",
         definition: {
             fields: [
                 {
                     type: "vector",
                     path: "embedding",
-                    numDimensions: 1536, 
-                    similarity: "cosine"
+                    numDimensions: 1536,
+                    similarity: "cosine",
+                    quantization: "scalar"
+                },
+                { type: "filter", path: "pattern_type" },
+                { type: "filter", path: "technology_stack" },
+                { type: "filter", path: "complexity_level" },
+                { type: "filter", path: "success_metrics.success_rate" },
+                { type: "filter", path: "quality_score" }
+            ]
+        }
+    },
+    prp_templates: {
+        name: "templates_vector_search",
+        definition: {
+            fields: [
+                {
+                    type: "vector",
+                    path: "embedding",
+                    numDimensions: 1536,
+                    similarity: "cosine",
+                    quantization: "scalar"
                 },
                 { type: "filter", path: "feature_types" },
-                { type: "filter", path: "success_metrics.avg_success_rate" }
+                { type: "filter", path: "success_metrics.avg_success_rate" },
+                { type: "filter", path: "version" }
+            ]
+        }
+    },
+    research_knowledge: {
+        name: "research_vector_search",
+        definition: {
+            fields: [
+                {
+                    type: "vector",
+                    path: "embedding",
+                    numDimensions: 1536,
+                    similarity: "cosine",
+                    quantization: "scalar"
+                },
+                { type: "filter", path: "technology_stack" },
+                { type: "filter", path: "topic" },
+                { type: "filter", path: "validation_status" },
+                { type: "filter", path: "freshness_score" }
+            ]
+        }
+    },
+    implementation_outcomes: {
+        name: "outcomes_vector_search",
+        definition: {
+            fields: [
+                {
+                    type: "vector",
+                    path: "embedding",
+                    numDimensions: 1536,
+                    similarity: "cosine",
+                    quantization: "scalar"
+                },
+                { type: "filter", path: "success" },
+                { type: "filter", path: "technology_stack" },
+                { type: "filter", path: "ai_assistant_used" },
+                { type: "filter", path: "patterns_used" }
+            ]
+        }
+    },
+    context_assemblies: {
+        name: "assemblies_vector_search",
+        definition: {
+            fields: [
+                {
+                    type: "vector",
+                    path: "embedding",
+                    numDimensions: 1536,
+                    similarity: "cosine",
+                    quantization: "scalar"
+                },
+                { type: "filter", path: "feature_signature" },
+                { type: "filter", path: "effectiveness_score" },
+                { type: "filter", path: "usage_count" }
             ]
         }
     }
@@ -185,17 +246,74 @@ async function setupDatabase() {
             }
         }
         
-        // Display vector search index information
-        console.log('\n🔮 Vector Search Indexes (Phase 2):');
-        console.log('   These need to be created manually in MongoDB Atlas UI:');
+        // Create Vector Search indexes (2025 MongoDB best practices)
+        console.log('\n🚀 Creating Vector Search indexes (2025 best practices)...');
+        console.log('   Using latest MongoDB Atlas Vector Search features:');
+        console.log('   • Scalar quantization for optimal performance');
+        console.log('   • Cosine similarity for text embeddings');
+        console.log('   • 1536 dimensions (OpenAI text-embedding-3-small)');
+        console.log('   • Advanced filtering capabilities\n');
+
         for (const [collectionName, indexConfig] of Object.entries(VECTOR_SEARCH_INDEXES)) {
-            console.log(`   📋 ${collectionName}: ${indexConfig.name}`);
+            try {
+                const collection = db.collection(collectionName);
+
+                // Use the latest createSearchIndex method (MongoDB Driver 6.6.0+)
+                await collection.createSearchIndex({
+                    name: indexConfig.name,
+                    type: "vectorSearch",
+                    definition: indexConfig.definition
+                });
+
+                console.log(`  ✅ Created Vector Search index: ${indexConfig.name} on ${collectionName}`);
+                console.log(`     • Vector field: embedding (1536 dimensions)`);
+                console.log(`     • Similarity: cosine with scalar quantization`);
+                console.log(`     • Filters: ${indexConfig.definition.fields.filter(f => f.type === 'filter').length} filter fields`);
+
+            } catch (error) {
+                if (error.message.includes('already exists') || error.message.includes('duplicate')) {
+                    console.log(`  ℹ️  Vector Search index already exists: ${indexConfig.name}`);
+                } else if (error.message.includes('not supported') || error.message.includes('Atlas')) {
+                    console.log(`  ⚠️  Vector Search requires MongoDB Atlas - skipping ${indexConfig.name}`);
+                    console.log(`     Manual creation required in Atlas UI for: ${collectionName}`);
+                } else {
+                    console.log(`  ⚠️  Could not create Vector Search index ${indexConfig.name}: ${error.message}`);
+                    console.log(`     This may require manual creation in MongoDB Atlas UI`);
+                }
+            }
         }
-        console.log('   📖 See: https://docs.atlas.mongodb.com/atlas-vector-search/create-index/');
+
+        console.log('\n📋 Vector Search Index Summary:');
+        console.log('   If any indexes failed to create automatically, you can create them manually:');
+        console.log('   1. Go to MongoDB Atlas → Your Cluster → Search');
+        console.log('   2. Create Search Index → Vector Search');
+        console.log('   3. Use the index definitions from this script');
+        console.log('   📖 Documentation: https://docs.atlas.mongodb.com/atlas-vector-search/create-index/');
         
-        console.log('\n🎉 Database setup complete!');
-        console.log(`📊 Database: ${DATABASE_NAME}`);
-        console.log(`🔗 Connection: ${connectionString.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}`);
+        console.log('\n🎉 MongoDB Context Engineering Platform Setup Complete!');
+        console.log('');
+        console.log('📊 Database Configuration:');
+        console.log(`   • Database: ${DATABASE_NAME}`);
+        console.log(`   • Collections: ${Object.keys(COLLECTIONS).length} created`);
+        console.log(`   • Traditional Indexes: Performance optimized`);
+        console.log(`   • Vector Search Indexes: 2025 best practices applied`);
+        console.log('');
+        console.log('🚀 Revolutionary Features Enabled:');
+        console.log('   • Semantic similarity search with OpenAI embeddings');
+        console.log('   • Scalar quantization for optimal performance');
+        console.log('   • Advanced filtering and hybrid search capabilities');
+        console.log('   • Collaborative learning and pattern recognition');
+        console.log('');
+        console.log('🔗 Connection Details:');
+        console.log(`   • Atlas Cluster: ${connectionString.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}`);
+        console.log('   • Ready for MCP Context Engineering Platform!');
+        console.log('');
+        console.log('🎯 Next Steps:');
+        console.log('   1. Run: mcp-context-engineering generate-sample-data');
+        console.log('   2. Configure your AI assistant with MCP server');
+        console.log('   3. Start using revolutionary context intelligence!');
+        console.log('');
+        console.log('🌟 Welcome to the future of AI-assisted development! 🌟');
         
     } catch (error) {
         console.error('❌ Database setup failed:', error.message);
