@@ -35,40 +35,60 @@ echo "🎉 Installation Complete!"
 echo ""
 
 # Interactive environment setup
-echo "⚙️  Let's set up your environment variables interactively!"
-echo ""
+# Check if running interactively
+if [ -t 0 ]; then
+    echo "⚙️  Let's set up your environment variables interactively!"
+    echo ""
 
-# Get MongoDB connection string
-echo "🔗 MongoDB Atlas Connection String"
-echo "   You can find this in MongoDB Atlas → Connect → Connect your application"
-echo ""
-while true; do
-    read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
-    if [ -n "$MONGODB_CONNECTION" ] && [ "$MONGODB_CONNECTION" != "" ]; then
-        break
-    else
-        echo "❌ MongoDB connection string cannot be empty!"
-        echo "   Please paste your actual connection string."
-        echo ""
-    fi
-done
-echo ""
+    # Get MongoDB connection string
+    echo "🔗 MongoDB Atlas Connection String"
+    echo "   You can find this in MongoDB Atlas → Connect → Connect your application"
+    echo ""
+    while true; do
+        read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
+        if [ -n "$MONGODB_CONNECTION" ] && [ "$MONGODB_CONNECTION" != "" ]; then
+            break
+        else
+            echo "❌ MongoDB connection string cannot be empty!"
+            echo "   Please paste your actual connection string."
+            echo ""
+        fi
+    done
+    echo ""
 
-# Get OpenAI API key
-echo "🤖 OpenAI API Key"
-echo "   You can find this at https://platform.openai.com/api-keys"
-echo ""
-while true; do
-    read -p "📋 Please paste your OpenAI API key (starts with sk-): " OPENAI_KEY
-    if [ -n "$OPENAI_KEY" ] && [ "$OPENAI_KEY" != "" ] && [[ "$OPENAI_KEY" == sk-* ]]; then
-        break
-    else
-        echo "❌ OpenAI API key must start with 'sk-' and cannot be empty!"
-        echo "   Please paste your actual API key."
-        echo ""
-    fi
-done
-echo ""
+    # Get OpenAI API key
+    echo "🤖 OpenAI API Key"
+    echo "   You can find this at https://platform.openai.com/api-keys"
+    echo ""
+    while true; do
+        read -p "📋 Please paste your OpenAI API key (starts with sk-): " OPENAI_KEY
+        if [ -n "$OPENAI_KEY" ] && [ "$OPENAI_KEY" != "" ] && [[ "$OPENAI_KEY" == sk-* ]]; then
+            break
+        else
+            echo "❌ OpenAI API key must start with 'sk-' and cannot be empty!"
+            echo "   Please paste your actual API key."
+            echo ""
+        fi
+    done
+    echo ""
+else
+    echo "🚨 NON-INTERACTIVE MODE DETECTED!"
+    echo ""
+    echo "   You're running this script via 'curl | bash' which doesn't support interactive input."
+    echo "   Please download and run the script directly for the interactive experience:"
+    echo ""
+    echo "   wget https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh"
+    echo "   chmod +x install.sh"
+    echo "   ./install.sh"
+    echo ""
+    echo "   OR set environment variables manually:"
+    echo "   export MDB_MCP_CONNECTION_STRING='your-mongodb-connection-string'"
+    echo "   export MDB_MCP_OPENAI_API_KEY='your-openai-api-key'"
+    echo ""
+    echo "   Then run: npm install -g mcp-context-engineering"
+    echo ""
+    exit 1
+fi
 
 # Final validation before setting variables
 echo "🔍 Validating credentials..."
