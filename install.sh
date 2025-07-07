@@ -1,25 +1,26 @@
 #!/bin/bash
 
 # 🚀 MCP Context Engineering Platform - Super Easy Installation Script
-# This script makes installation extremely easy with just one command
+# Transform static context into dynamic, intelligent, collaborative intelligence!
 
 set -e
 
 echo "🚀 Installing MCP Context Engineering Platform..."
+echo "   Revolutionary AI Context Intelligence for Any Assistant!"
 echo ""
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is not installed. Please install Node.js 18+ first:"
-    echo "   Visit: https://nodejs.org/"
+    echo "❌ Node.js is required but not installed."
+    echo "   Please install Node.js 18+ from https://nodejs.org/"
     exit 1
 fi
 
 # Check Node.js version
 NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
 if [ "$NODE_VERSION" -lt 18 ]; then
-    echo "❌ Node.js version 18+ is required. Current version: $(node -v)"
-    echo "   Please update Node.js: https://nodejs.org/"
+    echo "❌ Node.js 18+ is required. Current version: $(node -v)"
+    echo "   Please upgrade Node.js from https://nodejs.org/"
     exit 1
 fi
 
@@ -30,23 +31,22 @@ echo "📦 Installing mcp-context-engineering globally..."
 npm install -g mcp-context-engineering
 
 echo ""
-echo "🎉 Installation complete!"
+echo "🎉 Installation Complete!"
 echo ""
-echo "📋 Next steps:"
-echo ""
+echo "📋 Next Steps:"
 echo "1. Set up your environment variables:"
-echo "   export MDB_MCP_CONNECTION_STRING=\"mongodb+srv://username:password@cluster.mongodb.net/\""
-echo "   export MDB_MCP_OPENAI_API_KEY=\"sk-your-openai-api-key\"  # Optional for enhanced search"
+echo "   export MDB_MCP_CONNECTION_STRING='your-mongodb-connection-string'"
+echo "   export MDB_MCP_OPENAI_API_KEY='your-openai-api-key'"
 echo ""
 echo "2. Initialize the database:"
-echo "   mcp-context-engineering setup-db"
-echo "   mcp-context-engineering sample-data"
+echo "   mcp-context-engineering setup-database"
+echo "   mcp-context-engineering generate-sample-data"
 echo ""
-echo "3. Configure your AI assistant with MCP:"
-echo "   See examples/mcp-configs/ for configuration files"
+echo "3. Configure your AI assistant:"
+echo "   - Claude Desktop: Add to claude_desktop_config.json"
+echo "   - Cursor: Add to .cursorrules or MCP config"
+echo "   - VS Code: Add to settings.json"
 echo ""
-echo "🚀 Ready to revolutionize your AI-assisted development!"
+echo "📚 Full documentation: https://github.com/romiluz13/mcp_context_engineering"
 echo ""
-echo "📚 Documentation: https://github.com/romiluz13/mcp_context_engineering"
-echo "🆘 Support: https://github.com/romiluz13/mcp_context_engineering/issues"
-echo ""
+echo "🚀 Transform your AI development workflow today!"

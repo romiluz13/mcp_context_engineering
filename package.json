@@ -19,53 +19,48 @@
     "context-engineering",
     "ai-assistant",
     "mongodb",
+    "vector-search",
+    "semantic-search",
     "dynamic-context",
-    "intelligent-context",
-    "collaborative-ai",
+    "collaborative-intelligence",
+    "revolutionary",
     "cursor",
     "claude",
-    "copilot",
+    "vscode",
     "windsurf",
-    "context-intelligence",
-    "pattern-discovery",
-    "ai-development",
-    "revolutionary",
-    "universal-ai",
-    "semantic-search",
-    "vector-search"
+    "github-copilot"
   ],
   "scripts": {
+    "build": "tsc",
     "start": "node dist/index.js",
-    "build": "npm run build:clean && npm run build:compile && npm run build:chmod",
-    "build:clean": "rm -rf dist",
-    "build:compile": "tsc --project tsconfig.build.json",
-    "build:chmod": "chmod +x dist/index.js",
-    "dev": "tsx src/index.ts",
-    "setup-db": "node scripts/setup-database.js",
-    "sample-data": "node scripts/generate-sample-data.js",
-    "setup-all": "npm run build && npm run setup-db && npm run sample-data",
+    "dev": "tsc && node dist/index.js",
+    "setup-database": "node scripts/setup-database.js",
+    "generate-sample-data": "node scripts/generate-sample-data.js",
+    "setup-all": "npm run setup-database && npm run generate-sample-data",
+    "test": "echo \"Tests coming soon!\" && exit 0",
+    "clean": "rm -rf dist",
     "prepare": "npm run build"
   },
   "dependencies": {
-    "mongodb": "^6.15.0",
-    "openai": "^4.73.0",
-    "@modelcontextprotocol/sdk": "^1.11.2",
-    "zod": "^3.24.2"
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "mongodb": "^6.0.0",
+    "openai": "^4.0.0",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
-    "tsx": "^4.19.2"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "license": "Apache-2.0",
   "files": [
     "dist/**/*",
     "scripts/**/*",
-    "UNIVERSAL_AI_RULES.md",
+    "examples/**/*",
     "README.md",
-    "LICENSE"
-  ]
+    "LICENSE",
+    "UNIVERSAL_AI_RULES.md"
+  ],
+  "license": "MIT"
 }

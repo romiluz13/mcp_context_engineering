@@ -1,169 +1,281 @@
 #!/usr/bin/env node
 
-const { MongoClient } = require('mongodb');
+/**
+ * MongoDB Context Engineering Platform - Sample Data Generator
+ * 
+ * Generates sample implementation patterns and research knowledge
+ * for testing the context engineering platform.
+ */
 
-async function generateSampleData() {
-  const connectionString = process.env.MDB_MCP_CONNECTION_STRING;
-  
-  if (!connectionString) {
-    console.error('❌ MDB_MCP_CONNECTION_STRING environment variable is required');
-    process.exit(1);
-  }
+import { MongoClient } from 'mongodb';
+import OpenAI from 'openai';
 
-  console.log('🔗 Connecting to MongoDB...');
-  const client = new MongoClient(connectionString);
-  
-  try {
-    await client.connect();
-    const db = client.db('context_engineering');
-    
-    console.log('📊 Generating sample data...');
-    
-    // Universal AI Rules
-    const universalRules = [
-      {
-        rule_id: "universal_ai_rule_001",
-        rule_type: "project_awareness",
-        title: "Project Awareness & Context",
-        content: "Always understand project structure before making changes - read documentation, examine existing patterns, maintain consistency with naming conventions and architecture.",
-        technology_stack: ["universal"],
-        ai_assistants: ["cursor", "vscode-copilot", "claude-desktop", "windsurf", "github-copilot", "all"],
-        enforcement_level: "high",
-        success_impact: 0.9,
-        usage_frequency: 1,
-        auto_enforcement: true,
-        created_at: new Date(),
-        updated_at: new Date(),
-        version: 1
-      },
-      {
-        rule_id: "universal_ai_rule_002", 
-        rule_type: "code_structure",
-        title: "Code Structure & Modularity",
-        content: "Keep files manageable (<500 lines), organize by responsibility, use consistent imports, separate concerns clearly (core logic, configuration, business logic, presentation).",
-        technology_stack: ["universal"],
-        ai_assistants: ["cursor", "vscode-copilot", "claude-desktop", "windsurf", "github-copilot", "all"],
-        enforcement_level: "high",
-        success_impact: 0.8,
-        usage_frequency: 1,
-        auto_enforcement: true,
-        created_at: new Date(),
-        updated_at: new Date(),
-        version: 1
-      },
-      {
-        rule_id: "universal_ai_rule_003",
-        rule_type: "testing",
-        title: "Testing & Reliability", 
-        content: "Write tests for new features using project's testing framework, update existing tests when modifying functionality, include comprehensive coverage (happy path, edge cases, error handling).",
-        technology_stack: ["universal"],
-        ai_assistants: ["cursor", "vscode-copilot", "claude-desktop", "windsurf", "github-copilot", "all"],
-        enforcement_level: "high",
-        success_impact: 0.85,
-        usage_frequency: 1,
-        auto_enforcement: false,
-        created_at: new Date(),
-        updated_at: new Date(),
-        version: 1
-      }
-    ];
-    
-    // Implementation Patterns
-    const implementationPatterns = [
-      {
-        pattern_id: "universal_multi_agent_001",
-        pattern_name: "Universal Multi-Agent System Pattern",
-        pattern_type: "multi_agent_system",
-        description: "Multi-agent system pattern that works with any AI assistant and technology stack",
-        technology_stack: ["universal", "multi-language"],
-        ai_assistants: ["cursor", "vscode-copilot", "claude-desktop", "windsurf", "github-copilot"],
-        complexity_level: "intermediate",
-        success_rate: 0.85,
-        usage_frequency: 15,
-        implementation_time_hours: 8,
-        gotchas: [
-          "Ensure proper agent communication protocols",
-          "Handle agent failure scenarios gracefully", 
-          "Implement proper state management between agents"
-        ],
-        created_at: new Date(),
-        updated_at: new Date()
-      },
-      {
-        pattern_id: "universal_api_integration_001",
-        pattern_name: "Universal API Integration Pattern",
-        pattern_type: "api_integration",
-        description: "Robust API integration pattern with error handling, retries, and monitoring",
-        technology_stack: ["universal", "rest", "graphql"],
-        ai_assistants: ["cursor", "vscode-copilot", "claude-desktop", "windsurf", "github-copilot"],
-        complexity_level: "simple",
-        success_rate: 0.92,
-        usage_frequency: 45,
-        implementation_time_hours: 4,
-        gotchas: [
-          "Always implement proper rate limiting",
-          "Handle network timeouts gracefully",
-          "Log API responses for debugging"
-        ],
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    ];
-    
-    // PRP Templates
-    const prpTemplates = [
-      {
-        template_id: "universal_intermediate_001",
-        template_name: "Universal Intermediate Implementation Template",
-        complexity_level: "intermediate",
-        success_rate: 0.88,
-        usage_frequency: 25,
-        template_structure: {
-          goal: "Clear problem statement and objectives",
-          context: "All needed context including patterns and constraints", 
-          implementation: "Step-by-step implementation blueprint",
-          validation: "Testing and validation strategies"
-        },
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    ];
-    
-    // Research Knowledge
-    const researchKnowledge = [
-      {
-        research_id: "context_engineering_001",
-        title: "Context Engineering Best Practices",
-        source: "AI Development Research",
-        summary: "Comprehensive guide to context engineering principles for AI-assisted development",
-        freshness_score: 0.95,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    ];
-    
-    // Insert data
-    console.log('📝 Inserting universal AI rules...');
-    await db.collection('project_rules').insertMany(universalRules);
-    
-    console.log('📋 Inserting implementation patterns...');
-    await db.collection('implementation_patterns').insertMany(implementationPatterns);
-    
-    console.log('📄 Inserting PRP templates...');
-    await db.collection('prp_templates').insertMany(prpTemplates);
-    
-    console.log('📚 Inserting research knowledge...');
-    await db.collection('research_knowledge').insertMany(researchKnowledge);
-    
-    console.log('✅ Sample data generated successfully!');
-    console.log(`📊 Generated: ${universalRules.length} rules, ${implementationPatterns.length} patterns, ${prpTemplates.length} templates, ${researchKnowledge.length} research items`);
-    
-  } catch (error) {
-    console.error('❌ Sample data generation failed:', error);
-    process.exit(1);
-  } finally {
-    await client.close();
-  }
+// Configuration from environment variables
+const config = {
+    connectionString: process.env.MDB_MCP_CONNECTION_STRING,
+    openaiApiKey: process.env.MDB_MCP_OPENAI_API_KEY || process.env.OPENAI_API_KEY
+};
+
+const DATABASE_NAME = 'context_engineering';
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || process.env.MDB_MCP_OPENAI_API_KEY
+});
+
+/**
+ * Generate embeddings for text content
+ */
+async function generateEmbedding(text) {
+    try {
+        const response = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: text,
+            dimensions: 1536,
+        });
+        
+        if (!response.data || response.data.length === 0) {
+            throw new Error("No embedding data returned from OpenAI");
+        }
+        
+        return response.data[0].embedding;
+    } catch (error) {
+        console.warn(`⚠️  Warning: Could not generate embedding: ${error.message}`);
+        return null;
+    }
 }
 
-generateSampleData();
+/**
+ * Sample implementation patterns
+ */
+const SAMPLE_PATTERNS = [
+    {
+        pattern_id: "pydantic_ai_multi_agent_001",
+        pattern_type: "agent",
+        title: "Pydantic AI Multi-Agent with Tool Pattern",
+        description: "Pattern for creating primary agent with sub-agent as tool for complex workflows",
+        code_snippet: `@research_agent.tool
+async def email_draft_tool(ctx: RunContext[AgentDeps], topic: str) -> str:
+    """Draft email using email agent as a tool"""
+    return await email_agent.run(f"Draft email about: {topic}", deps=ctx.deps)`,
+        technology_stack: ["python", "pydantic-ai", "asyncio"],
+        file_path: "examples/agent/multi_agent.py",
+        success_metrics: {
+            usage_count: 89,
+            success_rate: 0.94,
+            avg_implementation_time: 45,
+            total_success: 84,
+            total_failures: 5
+        },
+        gotchas: [
+            "Always use async/await for agent tools",
+            "Dependencies must be properly typed",
+            "Agent-as-tool pattern requires careful context passing"
+        ],
+        validation_commands: ["pytest tests/", "ruff check", "mypy ."],
+        complexity_level: "intermediate",
+        quality_score: 0.91
+    },
+    {
+        pattern_id: "fastapi_crud_001",
+        pattern_type: "api",
+        title: "FastAPI CRUD with Pydantic Models",
+        description: "Standard CRUD operations with proper validation and error handling",
+        code_snippet: `@app.post("/items/", response_model=ItemResponse)
+async def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+    """Create new item with validation"""
+    db_item = Item(**item.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item`,
+        technology_stack: ["python", "fastapi", "pydantic", "sqlalchemy"],
+        file_path: "examples/api/crud.py",
+        success_metrics: {
+            usage_count: 156,
+            success_rate: 0.97,
+            avg_implementation_time: 30,
+            total_success: 151,
+            total_failures: 5
+        },
+        gotchas: [
+            "Always use Depends() for database sessions",
+            "Validate input with Pydantic models",
+            "Handle database exceptions properly"
+        ],
+        validation_commands: ["pytest tests/test_api.py", "ruff check", "mypy ."],
+        complexity_level: "beginner",
+        quality_score: 0.95
+    },
+    {
+        pattern_id: "cli_argparse_001",
+        pattern_type: "cli",
+        title: "CLI with Argparse and Rich Output",
+        description: "Command-line interface with proper argument parsing and rich console output",
+        code_snippet: `import argparse
+from rich.console import Console
+
+def main():
+    parser = argparse.ArgumentParser(description="Context Engineering CLI")
+    parser.add_argument("--feature", required=True, help="Feature to implement")
+    args = parser.parse_args()
+    
+    console = Console()
+    console.print(f"[green]Processing feature:[/green] {args.feature}")`,
+        technology_stack: ["python", "argparse", "rich"],
+        file_path: "examples/cli/main.py",
+        success_metrics: {
+            usage_count: 67,
+            success_rate: 0.91,
+            avg_implementation_time: 20,
+            total_success: 61,
+            total_failures: 6
+        },
+        gotchas: [
+            "Use rich for better console output",
+            "Always validate CLI arguments",
+            "Provide helpful error messages"
+        ],
+        validation_commands: ["pytest tests/test_cli.py", "ruff check"],
+        complexity_level: "beginner",
+        quality_score: 0.88
+    }
+];
+
+/**
+ * Sample research knowledge
+ */
+const SAMPLE_RESEARCH = [
+    {
+        knowledge_id: "pydantic_ai_multi_agent_001",
+        topic: "pydantic_ai_multi_agent",
+        title: "Pydantic AI Multi-Agent System Patterns",
+        documentation_urls: [
+            {
+                url: "https://ai.pydantic.dev/multi-agent-applications/",
+                section: "Agent-as-tool pattern",
+                critical_insights: ["Pass usage context for token tracking", "Use RunContext for dependency injection"],
+                last_validated: new Date()
+            }
+        ],
+        key_insights: [
+            "Agent-as-tool pattern requires passing ctx.usage for token tracking",
+            "Multi-agent systems need careful error handling between agents",
+            "Dependencies should be injected via RunContext pattern"
+        ],
+        common_pitfalls: [
+            "Forgetting to pass usage context between agents",
+            "Using sync functions in async agent context",
+            "Not handling API rate limits properly"
+        ],
+        code_examples: [
+            {
+                title: "Agent-as-tool registration",
+                code: "@research_agent.tool\nasync def email_tool(ctx: RunContext[Deps], topic: str)...",
+                source: "official_docs"
+            }
+        ],
+        technology_stack: ["pydantic-ai", "python"],
+        freshness_score: 0.95,
+        validation_status: "verified"
+    },
+    {
+        knowledge_id: "fastapi_best_practices_001",
+        topic: "fastapi_best_practices",
+        title: "FastAPI Production Best Practices",
+        documentation_urls: [
+            {
+                url: "https://fastapi.tiangolo.com/tutorial/dependencies/",
+                section: "Dependency Injection",
+                critical_insights: ["Use Depends() for shared logic", "Database sessions should be dependencies"],
+                last_validated: new Date()
+            }
+        ],
+        key_insights: [
+            "Always use dependency injection for database sessions",
+            "Pydantic models provide automatic validation",
+            "Use response_model for consistent API responses"
+        ],
+        common_pitfalls: [
+            "Not closing database connections properly",
+            "Missing input validation",
+            "Inconsistent error handling"
+        ],
+        technology_stack: ["fastapi", "python", "pydantic"],
+        freshness_score: 0.92,
+        validation_status: "verified"
+    }
+];
+
+/**
+ * Generate sample data
+ */
+async function generateSampleData() {
+    console.log('🎲 Generating sample data for testing...\n');
+    
+    const connectionString = process.env.MONGODB_CONNECTION_STRING || 
+        process.env.MDB_MCP_CONNECTION_STRING ||
+        config.connectionString;
+    
+    if (!connectionString) {
+        console.error('❌ Error: MongoDB connection string not found!');
+        process.exit(1);
+    }
+
+    const client = new MongoClient(connectionString);
+    
+    try {
+        await client.connect();
+        console.log('✅ Connected to MongoDB Atlas');
+        
+        const db = client.db(DATABASE_NAME);
+        
+        // Generate implementation patterns
+        console.log('\n🔧 Generating implementation patterns...');
+        const patternsCollection = db.collection('implementation_patterns');
+        
+        for (const pattern of SAMPLE_PATTERNS) {
+            console.log(`   🔮 Generating embedding for: ${pattern.title}`);
+            pattern.embedding = await generateEmbedding(`${pattern.title}\n${pattern.description}\n${pattern.code_snippet}`);
+            pattern.created_at = new Date();
+            pattern.updated_at = new Date();
+            pattern.contributed_by = "sample_data_generator";
+        }
+        
+        await patternsCollection.deleteMany({ contributed_by: "sample_data_generator" });
+        const patternsResult = await patternsCollection.insertMany(SAMPLE_PATTERNS);
+        console.log(`   ✅ Generated ${patternsResult.insertedCount} implementation patterns`);
+        
+        // Generate research knowledge
+        console.log('\n📚 Generating research knowledge...');
+        const researchCollection = db.collection('research_knowledge');
+        
+        for (const research of SAMPLE_RESEARCH) {
+            console.log(`   🔮 Generating embedding for: ${research.title}`);
+            research.embedding = await generateEmbedding(`${research.title}\n${research.key_insights.join(' ')}`);
+            research.created_at = new Date();
+            research.updated_at = new Date();
+            research.last_verified = new Date();
+        }
+        
+        await researchCollection.deleteMany({ knowledge_id: { $in: SAMPLE_RESEARCH.map(r => r.knowledge_id) } });
+        const researchResult = await researchCollection.insertMany(SAMPLE_RESEARCH);
+        console.log(`   ✅ Generated ${researchResult.insertedCount} research knowledge entries`);
+        
+        console.log('\n🎉 Sample data generation complete!');
+        console.log('📊 Ready for testing context engineering tools');
+        
+    } catch (error) {
+        console.error('❌ Sample data generation failed:', error.message);
+        process.exit(1);
+    } finally {
+        await client.close();
+    }
+}
+
+// Run the generator
+if (import.meta.url === `file://${process.argv[1]}`) {
+    generateSampleData().catch(console.error);
+}
+
+export { generateSampleData };

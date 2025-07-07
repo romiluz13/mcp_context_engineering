@@ -1,74 +1,105 @@
 # MCP Configuration Examples
 
-This directory contains example MCP configuration files for different AI assistants.
+This directory contains configuration examples for various AI assistants that support the Model Context Protocol (MCP).
 
-## 🔧 Setup Instructions
+## Claude Desktop
 
-### 1. Choose Your AI Assistant
+File: `claude_desktop_config.json`
+Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 
-- **Cursor IDE**: Use `cursor-mcp.json`
-- **Claude Desktop**: Use `claude-desktop-config.json`
-- **VS Code with Copilot**: Use `cursor-mcp.json` (same format)
-
-### 2. Update Configuration
-
-Replace the placeholder values:
-- `username:password@cluster.mongodb.net/` → Your MongoDB connection string
-- `sk-your-openai-api-key` → Your OpenAI API key (optional)
-
-### 3. Install Configuration
-
-#### Cursor IDE
-```bash
-# Copy to Cursor's MCP configuration directory
-cp cursor-mcp.json ~/.cursor/mcp.json
+```json
+{
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+      }
+    }
+  }
+}
 ```
 
-#### Claude Desktop
-```bash
-# macOS
-cp claude-desktop-config.json ~/Library/Application\ Support/Claude/claude_desktop_config.json
+## Cursor
 
-# Windows
-cp claude-desktop-config.json %APPDATA%\Claude\claude_desktop_config.json
+Add to your MCP configuration:
 
-# Linux
-cp claude-desktop-config.json ~/.config/Claude/claude_desktop_config.json
+```json
+{
+  "mcp": {
+    "servers": {
+      "context-engineering": {
+        "command": "mcp-context-engineering",
+        "env": {
+          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string", 
+          "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+        }
+      }
+    }
+  }
+}
 ```
 
-### 4. Restart Your AI Assistant
+## VS Code
 
-After updating the configuration, restart your AI assistant to load the MCP Context Engineering Platform.
+Add to your settings.json:
 
-## 🚀 Verification
+```json
+{
+  "mcp.servers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+      }
+    }
+  }
+}
+```
 
-Once configured, your AI assistant should have access to:
-- `context-research` - Intelligent pattern discovery
-- `context-assemble-prp` - Dynamic implementation planning
+## Windsurf
 
-Test by asking your AI assistant to use these tools!
+Similar to VS Code configuration - add to your MCP settings.
 
-## 🔧 Troubleshooting
+## Environment Variables
 
-### Common Issues
+Instead of putting credentials in config files, you can set environment variables:
 
-1. **"Tool not found"**
-   - Verify the configuration file is in the correct location
-   - Restart your AI assistant
-   - Check that `mcp-context-engineering` is installed globally
+```bash
+export MDB_MCP_CONNECTION_STRING="your-mongodb-connection-string"
+export MDB_MCP_OPENAI_API_KEY="your-openai-api-key"
+```
 
-2. **"MongoDB connection failed"**
-   - Verify your connection string is correct
-   - Ensure your MongoDB cluster allows connections from your IP
-   - Check that the database user has proper permissions
+Then use simplified configs:
 
-3. **"OpenAI API error"**
-   - Verify your OpenAI API key is correct
-   - Check your OpenAI account has sufficient credits
-   - Note: OpenAI integration is optional for basic functionality
+```json
+{
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering"
+    }
+  }
+}
+```
 
-### Getting Help
+## Getting Your Credentials
 
-- Check the main README.md for detailed setup instructions
-- Open an issue on GitHub if you encounter problems
-- Join our community discussions for support
+### MongoDB Connection String
+1. Create a MongoDB Atlas cluster
+2. Go to "Connect" → "Connect your application"
+3. Copy the connection string
+4. Replace `<password>` with your actual password
+
+### OpenAI API Key
+1. Go to https://platform.openai.com/api-keys
+2. Create a new API key
+3. Copy the key (starts with `sk-`)
+
+## Troubleshooting
+
+- Ensure `mcp-context-engineering` is installed globally: `npm install -g mcp-context-engineering`
+- Check that your MongoDB connection string is correct
+- Verify your OpenAI API key has access to embeddings API
+- Restart your AI assistant after configuration changes

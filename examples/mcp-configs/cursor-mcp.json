@@ -1,11 +1,12 @@
 {
-  "mcpServers": {
-    "mcp-context-engineering": {
-      "command": "npx",
-      "args": ["-y", "mcp-context-engineering"],
-      "env": {
-        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://username:password@cluster.mongodb.net/",
-        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key"
+  "mcp": {
+    "servers": {
+      "context-engineering": {
+        "command": "mcp-context-engineering",
+        "env": {
+          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string", 
+          "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+        }
       }
     }
   }
