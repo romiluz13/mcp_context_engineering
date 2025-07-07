@@ -54,9 +54,10 @@ Our MCP Context Engineering Platform follows **ALL** the latest 2025 MongoDB Atl
 
 ### **Step 1: Environment Setup**
 ```bash
-export MDB_MCP_CONNECTION_STRING="mongodb+srv://user:pass@cluster.mongodb.net/"
-export MDB_MCP_OPENAI_API_KEY="sk-your-openai-key"
+export MDB_MCP_CONNECTION_STRING='mongodb+srv://user:pass@cluster.mongodb.net/'
+export MDB_MCP_OPENAI_API_KEY='sk-your-openai-key'
 ```
+**💡 Copy-paste ready:** Just replace the values with your actual credentials!
 
 ### **Step 2: Database Initialization**
 ```bash

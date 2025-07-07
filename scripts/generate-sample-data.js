@@ -283,7 +283,8 @@ async function generateSampleData() {
     if (!connectionString) {
         printError('MongoDB connection string not found!');
         console.log('   Please set MDB_MCP_CONNECTION_STRING environment variable');
-        console.log('   Example: export MDB_MCP_CONNECTION_STRING="mongodb+srv://..."');
+        console.log('   💡 Copy-paste ready: export MDB_MCP_CONNECTION_STRING=\'your-mongodb-connection-string\'');
+        console.log('   Just replace your-mongodb-connection-string with your actual Atlas connection string');
         process.exit(1);
     }
     printSuccess('MongoDB connection string found');
@@ -292,7 +293,8 @@ async function generateSampleData() {
     if (!openaiApiKey) {
         printError('OpenAI API key not found!');
         console.log('   Please set MDB_MCP_OPENAI_API_KEY environment variable');
-        console.log('   Example: export MDB_MCP_OPENAI_API_KEY="sk-..."');
+        console.log('   💡 Copy-paste ready: export MDB_MCP_OPENAI_API_KEY=\'your-openai-api-key\'');
+        console.log('   Just replace your-openai-api-key with your actual OpenAI API key (starts with sk-)');
         process.exit(1);
     }
     printSuccess('OpenAI API key found');

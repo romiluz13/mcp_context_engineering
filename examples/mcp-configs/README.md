@@ -32,7 +32,7 @@ Add to your MCP configuration:
       "context-engineering": {
         "command": "mcp-context-engineering",
         "env": {
-          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string", 
+          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
           "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
         }
       }
@@ -68,9 +68,11 @@ Similar to VS Code configuration - add to your MCP settings.
 Instead of putting credentials in config files, you can set environment variables:
 
 ```bash
-export MDB_MCP_CONNECTION_STRING="your-mongodb-connection-string"
-export MDB_MCP_OPENAI_API_KEY="your-openai-api-key"
+export MDB_MCP_CONNECTION_STRING='your-mongodb-connection-string'
+export MDB_MCP_OPENAI_API_KEY='your-openai-api-key'
 ```
+
+**💡 Copy-paste ready:** Just replace the values with your actual credentials!
 
 Then use simplified configs:
 

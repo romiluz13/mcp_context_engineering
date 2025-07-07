@@ -46,9 +46,12 @@ npm install -g mcp-context-engineering
 
 ### 1. Set Environment Variables
 ```bash
-export MDB_MCP_CONNECTION_STRING="your-mongodb-connection-string"
-export MDB_MCP_OPENAI_API_KEY="your-openai-api-key"
+export MDB_MCP_CONNECTION_STRING='your-mongodb-connection-string'
+export MDB_MCP_OPENAI_API_KEY='your-openai-api-key'
 ```
+**💡 Just replace the values and paste:**
+- Replace `your-mongodb-connection-string` with your actual MongoDB Atlas connection string
+- Replace `your-openai-api-key` with your actual OpenAI API key (starts with `sk-`)
 
 ### 2. Interactive Database Setup
 ```bash
@@ -98,7 +101,7 @@ Add to your MCP configuration:
       "context-engineering": {
         "command": "mcp-context-engineering",
         "env": {
-          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string", 
+          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
           "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
         }
       }
