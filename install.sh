@@ -42,26 +42,39 @@ echo ""
 echo "🔗 MongoDB Atlas Connection String"
 echo "   You can find this in MongoDB Atlas → Connect → Connect your application"
 echo ""
-read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
+while true; do
+    read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
+    if [ -n "$MONGODB_CONNECTION" ] && [ "$MONGODB_CONNECTION" != "" ]; then
+        break
+    else
+        echo "❌ MongoDB connection string cannot be empty!"
+        echo "   Please paste your actual connection string."
+        echo ""
+    fi
+done
 echo ""
 
 # Get OpenAI API key
 echo "🤖 OpenAI API Key"
 echo "   You can find this at https://platform.openai.com/api-keys"
 echo ""
-read -p "📋 Please paste your OpenAI API key (starts with sk-): " OPENAI_KEY
+while true; do
+    read -p "📋 Please paste your OpenAI API key (starts with sk-): " OPENAI_KEY
+    if [ -n "$OPENAI_KEY" ] && [ "$OPENAI_KEY" != "" ] && [[ "$OPENAI_KEY" == sk-* ]]; then
+        break
+    else
+        echo "❌ OpenAI API key must start with 'sk-' and cannot be empty!"
+        echo "   Please paste your actual API key."
+        echo ""
+    fi
+done
 echo ""
 
-# Validate inputs
-if [ -z "$MONGODB_CONNECTION" ]; then
-    echo "❌ MongoDB connection string is required!"
-    echo "   Please run the script again and provide your connection string."
-    exit 1
-fi
-
-if [ -z "$OPENAI_KEY" ]; then
-    echo "❌ OpenAI API key is required!"
-    echo "   Please run the script again and provide your API key."
+# Final validation before setting variables
+echo "🔍 Validating credentials..."
+if [ -z "$MONGODB_CONNECTION" ] || [ -z "$OPENAI_KEY" ]; then
+    echo "❌ Critical error: Empty credentials detected!"
+    echo "   This should not happen. Please report this bug."
     exit 1
 fi
 
@@ -84,10 +97,15 @@ fi
 
 if [ -n "$SHELL_PROFILE" ]; then
     echo "💾 Adding environment variables to $SHELL_PROFILE for persistence..."
+
+    # Remove any existing MCP Context Engineering Platform entries
+    sed -i '' '/# MCP Context Engineering Platform/,+2d' "$SHELL_PROFILE" 2>/dev/null || true
+
+    # Add new entries
     echo "" >> "$SHELL_PROFILE"
     echo "# MCP Context Engineering Platform" >> "$SHELL_PROFILE"
-    echo "export MDB_MCP_CONNECTION_STRING='$MONGODB_CONNECTION'" >> "$SHELL_PROFILE"
-    echo "export MDB_MCP_OPENAI_API_KEY='$OPENAI_KEY'" >> "$SHELL_PROFILE"
+    printf "export MDB_MCP_CONNECTION_STRING='%s'\n" "$MONGODB_CONNECTION" >> "$SHELL_PROFILE"
+    printf "export MDB_MCP_OPENAI_API_KEY='%s'\n" "$OPENAI_KEY" >> "$SHELL_PROFILE"
     echo "✅ Environment variables saved to $SHELL_PROFILE"
     echo ""
 fi
