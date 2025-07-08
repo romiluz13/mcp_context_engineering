@@ -5,6 +5,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { MongoClient } from "mongodb";
 import OpenAI from "openai";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 const server = new McpServer(
   {
@@ -27,6 +30,26 @@ const config = {
 // MongoDB client and OpenAI client
 let mongoClient: MongoClient | null = null;
 let openaiClient: OpenAI | null = null;
+
+// Load Universal AI Rules
+function loadUniversalRules(): string {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const rulesPath = join(__dirname, '..', 'UNIVERSAL_AI_RULES.md');
+    return readFileSync(rulesPath, 'utf8');
+  } catch (error) {
+    console.warn('Could not load UNIVERSAL_AI_RULES.md:', error);
+    return `# Universal AI Assistant Rules
+
+## Core Principles
+- Follow project patterns and conventions
+- Write comprehensive tests and documentation
+- Use proper error handling and validation
+- Maintain code quality and consistency
+- Respect existing architecture and design patterns`;
+  }
+}
 
 // Initialize clients
 async function initializeClients() {
@@ -575,6 +598,11 @@ function generateDynamicPRP(
 
   let prp = `# Project Requirements and Patterns (PRP)\n\n`;
   prp += `## Feature Request\n${featureRequest}\n\n`;
+
+  // Add Universal AI Rules at the beginning
+  prp += `## Universal AI Assistant Rules\n\n`;
+  prp += `${loadUniversalRules()}\n\n`;
+  prp += `---\n\n`;
 
   // Add patterns section
   if (selected_patterns.length > 0) {
