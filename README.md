@@ -1,5 +1,9 @@
 # 🚀 MCP Context Engineering Platform
 
+[![Install in Cursor](https://img.shields.io/badge/Cursor-One_Click_Install-1e1e1e?style=for-the-badge&logo=cursor)](https://cursor.com/install-mcp?name=MongoDB%20Context%20Engineering&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1jb250ZXh0LWVuZ2luZWVyaW5nIn0%3D)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-One_Click_Install-0098FF?style=for-the-badge&logo=visualstudiocode)](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
+[![Install in Claude Desktop](https://img.shields.io/badge/Claude-One_Click_Install-FF6B35?style=for-the-badge&logo=anthropic)](https://modelcontextprotocol.io/quickstart/user)
+
 **Transform static context into dynamic, intelligent, collaborative intelligence for any AI assistant!**
 
 [![npm version](https://badge.fury.io/js/mcp-context-engineering.svg)](https://www.npmjs.com/package/mcp-context-engineering)
@@ -29,6 +33,40 @@
 - ✅ **Automated PRP generation** with proven templates
 - ✅ **Universal AI assistant support** via MCP protocol
 - ✅ **Collaborative knowledge base** that improves over time
+
+## 🚀 **Super Easy Setup (2 Minutes)**
+
+### **✨ Option 1: One-Click Install (Recommended)**
+Click the install button above for your AI assistant - it will automatically configure everything!
+
+### **✨ Option 2: Manual Setup**
+
+**Step 1: Install**
+```bash
+npm install -g mcp-context-engineering
+```
+
+**Step 2: Setup (Interactive Wizard)**
+```bash
+mcp-context-engineering setup-database
+```
+*The wizard will help you set up MongoDB Atlas and generate sample data*
+
+**Step 3: Start Chatting!**
+Just talk naturally to your AI assistant:
+
+```
+👤 "Help me build a user authentication system"
+🤖 "I'll research authentication patterns for you..."
+
+👤 "Create a real-time chat feature"
+🤖 "Let me find proven chat implementations..."
+
+👤 "Research payment processing patterns"
+🤖 "I'll search for secure payment solutions..."
+```
+
+**That's it! No complex configuration needed.** 🎉
 
 ## 🚀 Bulletproof Installation
 
@@ -116,14 +154,12 @@ Add to your `claude_desktop_config.json`:
 Add to your MCP configuration:
 ```json
 {
-  "mcp": {
-    "servers": {
-      "context-engineering": {
-        "command": "mcp-context-engineering",
-        "env": {
-          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
-          "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
-        }
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
       }
     }
   }

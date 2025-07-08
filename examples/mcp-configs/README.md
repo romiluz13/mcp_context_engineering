@@ -27,14 +27,12 @@ Add to your MCP configuration:
 
 ```json
 {
-  "mcp": {
-    "servers": {
-      "context-engineering": {
-        "command": "mcp-context-engineering",
-        "env": {
-          "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
-          "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
-        }
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
       }
     }
   }

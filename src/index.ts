@@ -227,16 +227,16 @@ function calculateSummary(patterns: any[], rules: any[], research: any[]) {
 
 // Context Research Tool
 const contextResearchSchema = {
-  feature_request: z.string().describe("The feature or functionality you want to implement"),
-  technology_stack: z.array(z.string()).optional().describe("Technology stack preferences"),
-  success_rate_threshold: z.number().min(0).max(1).optional().default(0.7).describe("Minimum success rate for patterns"),
-  max_results: z.number().min(1).max(50).optional().default(10).describe("Maximum number of results to return"),
-  include_research: z.boolean().optional().default(true).describe("Include external research knowledge")
+  feature_request: z.string().describe("What you want to build (e.g., 'user authentication system', 'real-time chat', 'payment processing')"),
+  technology_stack: z.array(z.string()).optional().describe("Technologies you're using (e.g., ['React', 'Node.js', 'MongoDB'])"),
+  success_rate_threshold: z.number().min(0).max(1).optional().default(0.7).describe("Only show patterns with high success rates (0.7 = 70% success rate)"),
+  max_results: z.number().min(1).max(50).optional().default(10).describe("Maximum number of research results to return"),
+  include_research: z.boolean().optional().default(true).describe("Include external documentation and best practices")
 };
 
 server.tool(
   "context-research",
-  "🔍 Intelligent pattern and rule discovery using MongoDB semantic search and vector embeddings",
+  "🔍 Research and discover implementation patterns for any feature or technology. I'll search through MongoDB's collaborative knowledge base to find similar implementations, best practices, and proven solutions. Just tell me what you want to build and I'll find relevant patterns and examples.",
   contextResearchSchema,
   async (args) => {
     try {
@@ -441,7 +441,7 @@ const contextAssemblePRPSchema = {
 
 server.tool(
   "context-assemble-prp",
-  "📋 Dynamically assemble optimal PRP using MongoDB aggregation and advanced context intelligence",
+  "📋 Create a comprehensive implementation plan (PRP) for any feature. I'll research similar implementations, gather best practices, and create a detailed step-by-step plan with validation checkpoints. Just describe what you want to build and I'll create a complete blueprint for implementation.",
   contextAssemblePRPSchema,
   async (args) => {
     try {

@@ -11,6 +11,9 @@ import { MongoClient } from 'mongodb';
 import readline from 'readline';
 import { promisify } from 'util';
 
+// Detect interactive environment
+const isInteractive = process.stdin.isTTY && process.stdout.isTTY && !process.env.CI;
+
 // Create readline interface for interactive prompts
 const rl = readline.createInterface({
     input: process.stdin,
@@ -18,6 +21,20 @@ const rl = readline.createInterface({
 });
 
 const question = promisify(rl.question).bind(rl);
+
+// Enhanced question with timeout and non-interactive detection
+async function questionWithTimeout(prompt, timeout = 30000) {
+    if (!isInteractive) {
+        throw new Error('Non-interactive environment detected');
+    }
+
+    return Promise.race([
+        question(prompt),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Prompt timeout - no input received')), timeout)
+        )
+    ]);
+}
 
 const DATABASE_NAME = 'context_engineering';
 
@@ -54,12 +71,28 @@ function printInfo(message) {
 }
 
 async function askQuestion(questionText, defaultValue = null) {
+    if (!isInteractive) {
+        console.log('❌ Non-interactive environment detected.');
+        console.log('Please set environment variables manually:');
+        console.log('export MDB_MCP_CONNECTION_STRING="your_connection_string"');
+        console.log('export MDB_MCP_OPENAI_API_KEY="your_api_key"');
+        throw new Error('Non-interactive environment - manual setup required');
+    }
+
     const prompt = defaultValue
         ? `${questionText} (default: ${defaultValue}): `
         : `${questionText}: `;
 
-    const answer = await question(prompt);
-    return answer.trim() || defaultValue;
+    try {
+        const answer = await questionWithTimeout(prompt);
+        return answer.trim() || defaultValue;
+    } catch (error) {
+        if (error.message.includes('timeout')) {
+            console.log('\n⏰ Input timeout - please try again or set environment variables manually');
+            throw new Error('Input timeout');
+        }
+        throw error;
+    }
 }
 
 async function askYesNo(questionText, defaultValue = 'y') {
@@ -70,6 +103,32 @@ async function askYesNo(questionText, defaultValue = 'y') {
 function maskConnectionString(connectionString) {
     if (!connectionString) return 'Not provided';
     return connectionString.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
+}
+
+/**
+ * Validate MongoDB connection string format
+ */
+function validateMongoConnectionString(connectionString) {
+    if (!connectionString) return false;
+    const mongoUrlRegex = /^mongodb(\+srv)?:\/\/.+/;
+    return mongoUrlRegex.test(connectionString);
+}
+
+/**
+ * Validate OpenAI API key format
+ */
+function validateOpenAIKey(apiKey) {
+    if (!apiKey) return false;
+    return apiKey.startsWith('sk-') && apiKey.length > 20;
+}
+
+/**
+ * Mask API key for display
+ */
+function maskKey(key) {
+    if (!key) return 'Not provided';
+    if (key.length <= 8) return '*'.repeat(key.length);
+    return key.substring(0, 4) + '*'.repeat(key.length - 8) + key.substring(key.length - 4);
 }
 
 /**
@@ -246,6 +305,16 @@ const VECTOR_SEARCH_INDEXES = {
 async function setupDatabase() {
     printBanner();
 
+    // Check for non-interactive environment first
+    if (!isInteractive) {
+        console.log('❌ Non-interactive environment detected.');
+        console.log('Please set environment variables manually:');
+        console.log('export MDB_MCP_CONNECTION_STRING="your_connection_string"');
+        console.log('export MDB_MCP_OPENAI_API_KEY="your_api_key"');
+        console.log('\n📖 Setup Guide: https://github.com/romiluz13/mcp_context_engineering#setup');
+        process.exit(1);
+    }
+
     console.log('Welcome to the revolutionary MongoDB Context Engineering Platform setup!');
     console.log('This interactive wizard will guide you through creating a world-class');
     console.log('AI context intelligence system powered by MongoDB Atlas Vector Search.\n');
@@ -267,12 +336,25 @@ async function setupDatabase() {
             console.log('\n📖 Need help? Visit: https://docs.atlas.mongodb.com/connect-to-cluster/');
             process.exit(1);
         }
+
+        if (!validateMongoConnectionString(connectionString)) {
+            printError('Invalid MongoDB connection string format.');
+            console.log('   Expected format: mongodb+srv://username:password@cluster.mongodb.net/');
+            console.log('   Make sure to include the full connection string from MongoDB Atlas');
+            process.exit(1);
+        }
     } else {
         printSuccess(`Found MongoDB connection string: ${maskConnectionString(connectionString)}`);
 
         const useExisting = await askYesNo('Would you like to use this connection string?');
         if (!useExisting) {
             connectionString = await askQuestion('Please enter your MongoDB Atlas connection string');
+
+            if (!validateMongoConnectionString(connectionString)) {
+                printError('Invalid MongoDB connection string format.');
+                console.log('   Expected format: mongodb+srv://username:password@cluster.mongodb.net/');
+                process.exit(1);
+            }
         }
     }
 

@@ -29,6 +29,82 @@ const config = {
 const DATABASE_NAME = 'context_engineering';
 
 /**
+ * Robust upsert function to handle duplicate keys gracefully
+ */
+async function upsertSampleData(collection, data, uniqueField) {
+    try {
+        const operations = data.map(doc => ({
+            updateOne: {
+                filter: { [uniqueField]: doc[uniqueField] },
+                update: { $setOnInsert: doc },
+                upsert: true
+            }
+        }));
+
+        const result = await collection.bulkWrite(operations, { ordered: false });
+        return {
+            insertedCount: result.upsertedCount,
+            existingCount: result.matchedCount,
+            totalProcessed: data.length
+        };
+    } catch (error) {
+        console.log(`⚠️ Some duplicate keys skipped in ${collection.collectionName} (expected for sample data)`);
+        return {
+            insertedCount: 0,
+            existingCount: data.length,
+            totalProcessed: data.length,
+            error: error.message
+        };
+    }
+}
+
+/**
+ * Generate unique pattern ID
+ */
+function generateUniqueId(type, index) {
+    return `${type}_${Date.now()}_${index}`;
+}
+
+/**
+ * Verify vector search index readiness
+ */
+async function verifyVectorIndexReadiness(collection, indexName) {
+    const maxRetries = 5;
+    const retryDelay = 10000; // 10 seconds
+
+    console.log(`   🔍 Verifying vector index ${indexName} readiness...`);
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            // Test vector search with a simple query
+            const testResult = await collection.aggregate([
+                {
+                    $vectorSearch: {
+                        index: indexName,
+                        path: "embedding",
+                        queryVector: new Array(1536).fill(0.1), // Test vector
+                        numCandidates: 1,
+                        limit: 1
+                    }
+                }
+            ]).toArray();
+
+            console.log(`   ✅ Vector index ${indexName} is ready for queries`);
+            return true;
+        } catch (error) {
+            console.log(`   ⏳ Vector index ${indexName} not ready yet (${i + 1}/${maxRetries}) - ${error.message.substring(0, 50)}...`);
+            if (i < maxRetries - 1) {
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
+        }
+    }
+
+    console.log(`   ⚠️ Vector index ${indexName} may need more time to be fully ready`);
+    console.log(`   💡 This is normal for new Atlas Vector Search indexes - they can take 5-10 minutes`);
+    return false;
+}
+
+/**
  * Interactive utilities
  */
 function printBanner() {
@@ -346,9 +422,9 @@ async function generateSampleData() {
             pattern.contributed_by = "sample_data_generator";
         }
         
-        await patternsCollection.deleteMany({ contributed_by: "sample_data_generator" });
-        const patternsResult = await patternsCollection.insertMany(SAMPLE_PATTERNS);
-        console.log(`   ✅ Generated ${patternsResult.insertedCount} implementation patterns`);
+        // Use upsert to handle duplicates gracefully
+        const patternsResult = await upsertSampleData(patternsCollection, SAMPLE_PATTERNS, 'pattern_id');
+        console.log(`   ✅ Generated ${patternsResult.insertedCount} new patterns, ${patternsResult.existingCount} already existed`);
         
         // Generate research knowledge
         console.log('\n📚 Generating research knowledge...');
@@ -362,9 +438,9 @@ async function generateSampleData() {
             research.last_verified = new Date();
         }
         
-        await researchCollection.deleteMany({ knowledge_id: { $in: SAMPLE_RESEARCH.map(r => r.knowledge_id) } });
-        const researchResult = await researchCollection.insertMany(SAMPLE_RESEARCH);
-        console.log(`   ✅ Generated ${researchResult.insertedCount} research knowledge entries`);
+        // Use upsert to handle duplicates gracefully
+        const researchResult = await upsertSampleData(researchCollection, SAMPLE_RESEARCH, 'knowledge_id');
+        console.log(`   ✅ Generated ${researchResult.insertedCount} new research entries, ${researchResult.existingCount} already existed`);
 
         // Generate PRP templates (Original context engineering templates)
         console.log('\n📋 Generating PRP templates...');
@@ -537,8 +613,13 @@ MongoDB Context Engineering Platform v1.0.1`,
         const templateResult = await templatesCollection.insertOne(originalPRPTemplate);
         console.log(`   ✅ Generated original PRP template with MongoDB enhancements`);
 
+        // Verify vector search readiness
+        console.log('\n🔍 Verifying vector search readiness...');
+        await verifyVectorIndexReadiness(patternsCollection, 'patterns_vector_search');
+
         console.log('\n🎉 Sample data generation complete!');
         console.log('📊 Ready for testing context engineering tools');
+        console.log('💡 If vector search queries return empty results initially, wait 5-10 minutes for Atlas indexing');
         
     } catch (error) {
         console.error('❌ Sample data generation failed:', error.message);
