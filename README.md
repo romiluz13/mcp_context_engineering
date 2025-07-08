@@ -239,12 +239,23 @@ Your AI assistant has access to these powerful tools:
 curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh | bash
 ```
 
-**What this does:**
-- ✅ **Installs the package globally** via npm
-- ✅ **Interactive credential setup** - just paste your MongoDB connection string and OpenAI API key
-- ✅ **Automatic database setup** - creates vector indexes and sample data
-- ✅ **Perfect shell integration** - works with zsh, bash, and fish
-- ✅ **Zero-error validation** - prevents invalid inputs and guides you to success
+**🔒 SECURE LOCAL-FIRST SETUP:**
+- ✅ **Local MongoDB setup** (recommended - completely private)
+- ✅ **OpenAI API key configuration** (for AI embeddings)
+- ✅ **Database creation** with vector search indexes
+- ✅ **Sample data generation** for immediate testing
+- ✅ **Zero-error validation** - prevents invalid inputs
+
+### **🏠 Local MongoDB (Default & Recommended)**
+- **Complete privacy** - your data stays on your machine
+- **No cloud accounts needed** - just install MongoDB locally
+- **Faster performance** - no network latency
+- **Works offline** after initial setup
+
+### **☁️ MongoDB Atlas (Optional)**
+- Use your own MongoDB Atlas account
+- Your connection string stays private
+- Good for team collaboration
 
 **That's it! One command and you're ready to go.** 🎉
 
@@ -252,12 +263,18 @@ curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/m
 
 ### **Add to Your AI Assistant Configuration**
 
+**🔑 IMPORTANT: You need to add your API keys to the MCP configuration!**
+
 **Claude Desktop** (`claude_desktop_config.json`):
 ```json
 {
   "mcpServers": {
     "context-engineering": {
-      "command": "mcp-context-engineering"
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key-here"
+      }
     }
   }
 }
@@ -268,13 +285,21 @@ curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/m
 {
   "mcpServers": {
     "context-engineering": {
-      "command": "mcp-context-engineering"
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key-here"
+      }
     }
   }
 }
 ```
 
-**That's it!** Environment variables are automatically loaded from your shell.
+**🔒 SECURITY NOTES:**
+- **Local MongoDB:** Use `mongodb://localhost:27017` (default)
+- **MongoDB Atlas:** Use your own connection string (stays private)
+- **OpenAI API Key:** Get from https://platform.openai.com/api-keys
+- **Your credentials stay private** - never shared or uploaded
 
 See [examples/mcp-configs/](examples/mcp-configs/) for more AI assistant configurations.
 

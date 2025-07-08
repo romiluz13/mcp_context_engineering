@@ -44,8 +44,9 @@ const DATABASE_NAME = 'context_engineering';
 function printBanner() {
     console.clear();
     console.log('\n🚀 ═══════════════════════════════════════════════════════════════════════════════');
-    console.log('   MONGODB CONTEXT ENGINEERING PLATFORM - INTERACTIVE SETUP');
+    console.log('   MONGODB CONTEXT ENGINEERING PLATFORM - SECURE LOCAL SETUP');
     console.log('   Transform static context into dynamic, intelligent, collaborative intelligence!');
+    console.log('   🔒 LOCAL-FIRST: Your data stays private and secure');
     console.log('═══════════════════════════════════════════════════════════════════════════════ 🚀\n');
 }
 
@@ -319,47 +320,163 @@ async function setupDatabase() {
     console.log('This interactive wizard will guide you through creating a world-class');
     console.log('AI context intelligence system powered by MongoDB Atlas Vector Search.\n');
 
-    // Step 1: Get MongoDB connection
-    printStep(1, 'MongoDB Atlas Connection', 'Let\'s connect to your MongoDB Atlas cluster');
+    // Step 1: Choose MongoDB Setup Type
+    printStep(1, 'MongoDB Setup Choice', 'Choose your preferred MongoDB setup');
 
-    let connectionString = process.env.MONGODB_CONNECTION_STRING ||
-        process.env.MDB_MCP_CONNECTION_STRING;
+    console.log('🔒 SECURE SETUP OPTIONS:');
+    console.log('   1. 🏠 LOCAL MongoDB (Recommended - Private & Secure)');
+    console.log('   2. ☁️  MongoDB Atlas (Cloud - Requires your own account)');
+    console.log('   3. 🔧 Custom Connection String\n');
 
-    if (!connectionString) {
-        console.log('🔗 I need your MongoDB Atlas connection string to continue.');
-        console.log('   You can find this in MongoDB Atlas → Connect → Connect your application\n');
+    const setupChoice = await askQuestion('Which setup would you prefer? (1/2/3)', '1');
 
-        connectionString = await askQuestion('Please enter your MongoDB Atlas connection string');
+    let connectionString;
+
+    if (setupChoice === '1' || setupChoice.toLowerCase().includes('local')) {
+        // LOCAL MONGODB SETUP
+        printStep('1a', 'Local MongoDB Setup', 'Setting up secure local MongoDB');
+
+        console.log('🏠 LOCAL MONGODB BENEFITS:');
+        console.log('   ✅ Complete privacy - your data never leaves your machine');
+        console.log('   ✅ No cloud accounts needed');
+        console.log('   ✅ Faster performance');
+        console.log('   ✅ No internet required after setup\n');
+
+        // Check if MongoDB is installed locally
+        console.log('🔍 Checking for local MongoDB installation...');
+
+        // Try common local MongoDB connection strings
+        const localConnections = [
+            'mongodb://localhost:27017',
+            'mongodb://127.0.0.1:27017',
+            'mongodb://localhost:27017/context_engineering'
+        ];
+
+        let localWorking = false;
+        for (const localConn of localConnections) {
+            try {
+                const testClient = new MongoClient(localConn);
+                await testClient.connect();
+                await testClient.close();
+                connectionString = localConn;
+                localWorking = true;
+                printSuccess(`Found working local MongoDB at: ${localConn}`);
+                break;
+            } catch (error) {
+                // Continue trying
+            }
+        }
+
+        if (!localWorking) {
+            console.log('⚠️  Local MongoDB not detected. Let me help you set it up!\n');
+            console.log('📥 INSTALL LOCAL MONGODB:');
+            console.log('   • macOS: brew install mongodb-community');
+            console.log('   • Ubuntu: sudo apt install mongodb');
+            console.log('   • Windows: Download from https://www.mongodb.com/try/download/community');
+            console.log('   • Docker: docker run -d -p 27017:27017 mongo:latest\n');
+
+            const installChoice = await askYesNo('Have you installed MongoDB locally?');
+            if (installChoice) {
+                connectionString = await askQuestion('Local MongoDB connection string', 'mongodb://localhost:27017');
+            } else {
+                console.log('💡 TIP: You can also use MongoDB Atlas (option 2) for a quick cloud setup');
+                const useAtlas = await askYesNo('Would you like to use MongoDB Atlas instead?');
+                if (useAtlas) {
+                    setupChoice = '2'; // Fall through to Atlas setup
+                } else {
+                    printError('MongoDB is required to continue. Please install MongoDB and try again.');
+                    process.exit(1);
+                }
+            }
+        }
+    }
+
+    if (setupChoice === '2' || setupChoice.toLowerCase().includes('atlas')) {
+        // MONGODB ATLAS SETUP
+        printStep('1b', 'MongoDB Atlas Setup', 'Connect to your MongoDB Atlas cluster');
+
+        console.log('☁️  MONGODB ATLAS SETUP:');
+        console.log('   🔗 You need your own MongoDB Atlas account');
+        console.log('   📋 Get connection string: Atlas → Connect → Connect your application');
+        console.log('   🔒 Your connection string stays private\n');
+
+        let existingConnectionString = process.env.MONGODB_CONNECTION_STRING ||
+            process.env.MDB_MCP_CONNECTION_STRING;
+
+        if (existingConnectionString) {
+            printSuccess(`Found existing connection: ${maskConnectionString(existingConnectionString)}`);
+            const useExisting = await askYesNo('Use this connection string?');
+            if (useExisting) {
+                connectionString = existingConnectionString;
+            }
+        }
 
         if (!connectionString) {
-            printError('MongoDB connection string is required to continue.');
-            console.log('\n📖 Need help? Visit: https://docs.atlas.mongodb.com/connect-to-cluster/');
-            process.exit(1);
-        }
+            connectionString = await askQuestion('Enter your MongoDB Atlas connection string');
 
-        if (!validateMongoConnectionString(connectionString)) {
-            printError('Invalid MongoDB connection string format.');
-            console.log('   Expected format: mongodb+srv://username:password@cluster.mongodb.net/');
-            console.log('   Make sure to include the full connection string from MongoDB Atlas');
-            process.exit(1);
-        }
-    } else {
-        printSuccess(`Found MongoDB connection string: ${maskConnectionString(connectionString)}`);
-
-        const useExisting = await askYesNo('Would you like to use this connection string?');
-        if (!useExisting) {
-            connectionString = await askQuestion('Please enter your MongoDB Atlas connection string');
+            if (!connectionString) {
+                printError('MongoDB Atlas connection string is required.');
+                console.log('\n📖 Need help? Visit: https://docs.atlas.mongodb.com/connect-to-cluster/');
+                process.exit(1);
+            }
 
             if (!validateMongoConnectionString(connectionString)) {
                 printError('Invalid MongoDB connection string format.');
-                console.log('   Expected format: mongodb+srv://username:password@cluster.mongodb.net/');
+                console.log('   Expected: mongodb+srv://username:password@cluster.mongodb.net/');
                 process.exit(1);
             }
         }
     }
 
-    // Step 2: Test connection
-    printStep(2, 'Testing Connection', 'Verifying your MongoDB Atlas connection');
+    if (setupChoice === '3' || setupChoice.toLowerCase().includes('custom')) {
+        // CUSTOM CONNECTION STRING
+        printStep('1c', 'Custom MongoDB Setup', 'Enter your custom MongoDB connection');
+
+        connectionString = await askQuestion('Enter your custom MongoDB connection string');
+
+        if (!connectionString) {
+            printError('Connection string is required.');
+            process.exit(1);
+        }
+    }
+
+    // Step 2: OpenAI API Key Setup
+    printStep(2, 'OpenAI API Key', 'Setting up AI embeddings and intelligence');
+
+    console.log('🤖 OPENAI API KEY SETUP:');
+    console.log('   🔑 Required for AI embeddings and vector search');
+    console.log('   💰 Get your API key: https://platform.openai.com/api-keys');
+    console.log('   🔒 Your API key stays private and secure\n');
+
+    let openaiApiKey = process.env.OPENAI_API_KEY || process.env.MDB_MCP_OPENAI_API_KEY;
+
+    if (openaiApiKey) {
+        const maskedKey = openaiApiKey.substring(0, 7) + '...' + openaiApiKey.substring(openaiApiKey.length - 4);
+        printSuccess(`Found existing OpenAI API key: ${maskedKey}`);
+        const useExisting = await askYesNo('Use this API key?');
+        if (!useExisting) {
+            openaiApiKey = null;
+        }
+    }
+
+    if (!openaiApiKey) {
+        openaiApiKey = await askQuestion('Enter your OpenAI API key (sk-...)');
+
+        if (!openaiApiKey) {
+            printError('OpenAI API key is required for AI embeddings.');
+            console.log('\n📖 Get your API key: https://platform.openai.com/api-keys');
+            process.exit(1);
+        }
+
+        if (!validateOpenAIApiKey(openaiApiKey)) {
+            printError('Invalid OpenAI API key format.');
+            console.log('   Expected format: sk-...');
+            process.exit(1);
+        }
+    }
+
+    // Step 3: Test connections
+    printStep(3, 'Testing Connections', 'Verifying MongoDB and OpenAI connections');
 
     const client = new MongoClient(connectionString);
 

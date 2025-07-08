@@ -3,8 +3,8 @@
     "context-engineering": {
       "command": "mcp-context-engineering",
       "env": {
-        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
-        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+        "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017",
+        "MDB_MCP_OPENAI_API_KEY": "sk-your-openai-api-key-here"
       }
     }
   }

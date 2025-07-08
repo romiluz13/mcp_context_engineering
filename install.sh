@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# 🚀 MCP Context Engineering Platform - Super Easy Installation Script
+# 🚀 MCP Context Engineering Platform - SECURE LOCAL-FIRST Installation
 # Transform static context into dynamic, intelligent, collaborative intelligence!
+# 🔒 LOCAL-FIRST: Your data stays private and secure
 
 set -e
 
 echo "🚀 Installing MCP Context Engineering Platform..."
 echo "   Revolutionary AI Context Intelligence for Any Assistant!"
+echo "   🔒 LOCAL-FIRST: Your data stays private and secure"
 echo ""
 
 # Check if Node.js is installed
@@ -40,20 +42,58 @@ if [ -t 0 ]; then
     echo "⚙️  Let's set up your environment variables interactively!"
     echo ""
 
-    # Get MongoDB connection string
-    echo "🔗 MongoDB Atlas Connection String"
-    echo "   You can find this in MongoDB Atlas → Connect → Connect your application"
+    # Choose MongoDB setup type
+    echo "🔒 SECURE MONGODB SETUP OPTIONS:"
+    echo "   1. 🏠 Local MongoDB (Recommended - Private & Secure)"
+    echo "   2. ☁️  MongoDB Atlas (Cloud - Your own account)"
     echo ""
+
     while true; do
-        read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
-        if [ -n "$MONGODB_CONNECTION" ] && [ "$MONGODB_CONNECTION" != "" ]; then
+        read -p "Which setup would you prefer? (1/2): " SETUP_CHOICE
+        if [ "$SETUP_CHOICE" = "1" ] || [ "$SETUP_CHOICE" = "2" ]; then
             break
         else
-            echo "❌ MongoDB connection string cannot be empty!"
-            echo "   Please paste your actual connection string."
-            echo ""
+            echo "❌ Please enter 1 or 2"
         fi
     done
+
+    if [ "$SETUP_CHOICE" = "1" ]; then
+        # LOCAL MONGODB SETUP
+        echo ""
+        echo "🏠 LOCAL MONGODB SETUP:"
+        echo "   ✅ Complete privacy - your data never leaves your machine"
+        echo "   ✅ No cloud accounts needed"
+        echo "   ✅ Faster performance"
+        echo ""
+
+        MONGODB_CONNECTION="mongodb://localhost:27017"
+        echo "✅ Using local MongoDB: $MONGODB_CONNECTION"
+        echo ""
+        echo "📥 If MongoDB isn't installed yet:"
+        echo "   • macOS: brew install mongodb-community"
+        echo "   • Ubuntu: sudo apt install mongodb"
+        echo "   • Windows: Download from https://www.mongodb.com/try/download/community"
+        echo "   • Docker: docker run -d -p 27017:27017 mongo:latest"
+    else
+        # MONGODB ATLAS SETUP
+        echo ""
+        echo "☁️  MONGODB ATLAS SETUP:"
+        echo "   🔗 You need your own MongoDB Atlas account"
+        echo "   📋 Get connection string: Atlas → Connect → Connect your application"
+        echo "   🔒 Your connection string stays private"
+        echo ""
+
+        while true; do
+            read -p "📋 Please paste your MongoDB Atlas connection string: " MONGODB_CONNECTION
+            if [ -n "$MONGODB_CONNECTION" ] && [ "$MONGODB_CONNECTION" != "" ]; then
+                break
+            else
+                echo "❌ MongoDB connection string cannot be empty!"
+                echo "   Please paste your actual connection string."
+                echo ""
+            fi
+        done
+    fi
     echo ""
 
     # Get OpenAI API key
