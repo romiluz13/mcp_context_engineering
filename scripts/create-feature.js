@@ -61,7 +61,7 @@ function getInitialTemplate() {
 ## What
 [Describe what you want to build - be specific and clear]
 
-## Why  
+## Why
 [Explain the business value, user impact, and problems this solves]
 
 ## Context
@@ -74,6 +74,42 @@ function getInitialTemplate() {
 
 *Created: [TIMESTAMP]*
 *MongoDB Context Engineering Platform v1.0.1*
+`;
+}
+
+/**
+ * Get EXACT INITIAL_EXAMPLE.md Template (27 lines from original repository)
+ * This is the MISSING template format that shows the complete structure
+ */
+function getInitialExampleTemplate() {
+    return `## FEATURE:
+
+- [Describe your feature - be specific about what you want to build]
+- [Technology stack and key components]
+- [Interface type: CLI, web app, API, etc.]
+- [Key integrations and external services]
+
+## EXAMPLES:
+
+In the \`examples/\` folder, there is a README for you to read to understand what the example is all about and also how to structure your own README when you create documentation for the above feature.
+
+- \`examples/code-patterns/\` - use these as templates and best practices
+- \`examples/implementations/\` - read through all files to understand proven patterns
+- \`examples/configurations/\` - configuration examples and setup patterns
+
+Don't copy any of these examples directly, they may be for different projects entirely. But use this as inspiration and for best practices.
+
+## DOCUMENTATION:
+
+[Relevant documentation links - be specific]
+
+## OTHER CONSIDERATIONS:
+
+- Include a .env.example, README with instructions for setup including configuration
+- Include the project structure in the README
+- Environment variables and configuration management
+- Security considerations and best practices
+- Testing strategy and validation approach
 `;
 }
 
