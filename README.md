@@ -97,6 +97,38 @@ Check our [MCP configuration examples](examples/mcp-configs/) for your specific 
 - **🌍 Universal AI Compatibility**: Works with Claude Desktop, Cursor, VS Code, Windsurf, GitHub Copilot
 - **⚡ Zero Setup**: One-line installation, no per-project configuration needed
 
+## 🎯 **Context Engineering Methodology**
+
+### **Prompt Engineering vs Context Engineering vs MongoDB Context Engineering**
+
+**Prompt Engineering:**
+- Focuses on clever wording and specific phrasing
+- Limited to how you phrase a task
+- Like giving someone a sticky note
+
+**Traditional Context Engineering:**
+- A complete system for providing comprehensive context
+- Includes documentation, examples, rules, patterns, and validation
+- Like writing a full screenplay with all the details
+- Static files in each project
+
+**MongoDB Context Engineering (Our Revolutionary Approach):**
+- **Dynamic, intelligent, collaborative context intelligence**
+- **MongoDB-powered pattern discovery and learning**
+- **Universal AI assistant compatibility via MCP protocol**
+- **Instant research vs 30+ minute manual work**
+- **Vector search for semantic pattern matching**
+- **Collaborative learning across all users**
+
+### **Why Context Engineering Matters**
+
+1. **Reduces AI Failures**: Most agent failures aren't model failures - they're context failures
+2. **Ensures Consistency**: AI follows your project patterns and conventions
+3. **Enables Complex Features**: AI can handle multi-step implementations with proper context
+4. **Self-Correcting**: Validation loops allow AI to fix its own mistakes
+5. **Collaborative Learning**: MongoDB intelligence improves patterns across all users
+6. **Universal Compatibility**: Works with any MCP-compatible AI assistant
+
 ## 🎯 What This Replaces
 
 **Instead of:**
@@ -300,6 +332,46 @@ Add to your MCP configuration:
 #### VS Code / Windsurf / Other MCP Clients
 See [examples/mcp-configs/](examples/mcp-configs/) for more configuration examples.
 
+## 📚 **Using Examples Effectively**
+
+The `examples/` directory is **critical** for success. AI coding assistants perform much better when they can see patterns to follow.
+
+### **What to Include in Examples**
+
+1. **Code Structure Patterns**
+   - How you organize modules
+   - Import conventions
+   - Class/function patterns
+
+2. **Testing Patterns**
+   - Test file structure
+   - Mocking approaches
+   - Assertion styles
+
+3. **Integration Patterns**
+   - API client implementations
+   - Database connections
+   - Authentication flows
+
+4. **CLI Patterns**
+   - Argument parsing
+   - Output formatting
+   - Error handling
+
+### **Example Structure**
+
+```
+examples/
+├── code-patterns/        # Implementation patterns and templates
+│   ├── README.md        # Explains what each example demonstrates
+│   └── patterns/        # Specific implementation patterns
+├── mcp-configs/         # AI assistant configuration examples
+│   ├── cursor-config.json    # Cursor AI configuration
+│   └── claude-desktop-config.json  # Claude Desktop configuration
+└── implementations/     # Real-world implementation examples
+    └── README.md        # Implementation examples guide
+```
+
 ## 🛠️ **All Available Commands**
 
 ### **🎯 Setup Commands (Run Once)**
@@ -454,6 +526,44 @@ We've completely eliminated installation bugs with:
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+## 🎯 **Best Practices**
+
+### **1. Be Explicit in Feature Requests**
+- Don't assume the AI knows your preferences
+- Include specific requirements and constraints
+- Reference examples liberally
+- Use the complete INITIAL_EXAMPLE.md format
+
+### **2. Provide Comprehensive Examples**
+- More examples = better implementations
+- Show both what to do AND what not to do
+- Include error handling patterns
+- Organize examples by pattern type
+
+### **3. Use Validation Gates**
+- PRPs include test commands that must pass
+- AI will iterate until all validations succeed
+- This ensures working code on first try
+- MongoDB tracks success rates for continuous improvement
+
+### **4. Leverage Documentation**
+- Include official API docs in research
+- Add MCP server resources
+- Reference specific documentation sections
+- Use MongoDB's collaborative knowledge base
+
+### **5. Customize Universal AI Rules**
+- Add your conventions to UNIVERSAL_AI_RULES.md
+- Include project-specific rules
+- Define coding standards
+- Ensure consistency across all AI assistants
+
+### **6. Trust the MongoDB Intelligence**
+- Let context-research find proven patterns
+- Use context-assemble-prp for comprehensive planning
+- Learn from community success rates
+- Contribute back successful implementations
 
 ## 📄 License
 
