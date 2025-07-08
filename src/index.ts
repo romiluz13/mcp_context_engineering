@@ -17,6 +17,9 @@ const server = new McpServer(
   {
     capabilities: {
       tools: {},
+      resources: {},
+      prompts: {},
+      logging: {},
     },
   }
 );
@@ -50,6 +53,104 @@ function loadUniversalRules(): string {
 - Respect existing architecture and design patterns`;
   }
 }
+
+// Register MCP Resources
+server.registerResource(
+  "universal-ai-rules",
+  "universal://ai-rules",
+  {
+    title: "Universal AI Assistant Rules",
+    description: "Global rules and guidelines for AI assistants",
+    mimeType: "text/markdown"
+  },
+  async (uri) => ({
+    contents: [{
+      uri: uri.href,
+      text: loadUniversalRules()
+    }]
+  })
+);
+
+server.registerResource(
+  "platform-config",
+  "config://platform",
+  {
+    title: "Platform Configuration",
+    description: "MongoDB Context Engineering Platform configuration and status",
+    mimeType: "application/json"
+  },
+  async (uri) => ({
+    contents: [{
+      uri: uri.href,
+      text: JSON.stringify({
+        platform: "MongoDB Context Engineering",
+        version: "1.0.0",
+        capabilities: ["context-research", "context-assemble-prp"],
+        mongodb_connected: !!mongoClient,
+        openai_configured: !!config.openaiApiKey,
+        status: "ready"
+      }, null, 2)
+    }]
+  })
+);
+
+// Register MCP Prompts
+server.registerPrompt(
+  "context-engineering-workflow",
+  {
+    title: "Context Engineering Workflow",
+    description: "Complete workflow for implementing features using MongoDB Context Engineering",
+    argsSchema: {
+      feature_description: z.string().describe("Description of the feature to implement")
+    }
+  },
+  ({ feature_description }) => ({
+    messages: [{
+      role: "user",
+      content: {
+        type: "text",
+        text: `I want to implement: ${feature_description}
+
+Please help me using the MongoDB Context Engineering workflow:
+
+1. First, call context-research to find relevant patterns and best practices
+2. Then, call context-assemble-prp to create a comprehensive implementation plan
+3. Follow the generated PRP to implement the feature with proper validation
+
+Let's start with research!`
+      }
+    }]
+  })
+);
+
+server.registerPrompt(
+  "debug-context-engineering",
+  {
+    title: "Debug Context Engineering",
+    description: "Troubleshoot issues with MongoDB Context Engineering platform",
+    argsSchema: {
+      issue_description: z.string().describe("Description of the issue you're experiencing")
+    }
+  },
+  ({ issue_description }) => ({
+    messages: [{
+      role: "user",
+      content: {
+        type: "text",
+        text: `I'm having an issue with MongoDB Context Engineering: ${issue_description}
+
+Please help me debug this by:
+
+1. Checking the platform configuration (use config://platform resource)
+2. Verifying MongoDB connection and vector search setup
+3. Testing the context-research and context-assemble-prp tools
+4. Providing specific troubleshooting steps
+
+Let's start by checking the platform status.`
+      }
+    }]
+  })
+);
 
 // Initialize clients
 async function initializeClients() {
@@ -257,9 +358,11 @@ const contextResearchSchema = {
   include_research: z.boolean().optional().default(true).describe("Include external documentation and best practices")
 };
 
-server.tool(
+server.registerTool(
   "context-research",
-  `🔍 INTELLIGENT PATTERN RESEARCH - Enhanced from original .claude/commands/generate-prp.md
+  {
+    title: "Context Research",
+    description: `🔍 INTELLIGENT PATTERN RESEARCH - Enhanced from original .claude/commands/generate-prp.md
 
 RESEARCH PROCESS (from original line-by-line):
 1. **Codebase Analysis** - Search for similar features/patterns in the codebase, identify files to reference, note existing conventions, check test patterns
@@ -269,7 +372,8 @@ RESEARCH PROCESS (from original line-by-line):
 I'll search through MongoDB's collaborative knowledge base to find similar implementations, best practices, and proven solutions. Provide the feature you want to build and I'll discover relevant patterns, rules, and research with confidence scoring.
 
 USAGE: Call this FIRST before context-assemble-prp to gather comprehensive research data.`,
-  contextResearchSchema,
+    inputSchema: contextResearchSchema,
+  },
   async (args) => {
     try {
       const {
@@ -476,9 +580,11 @@ const contextAssemblePRPSchema = {
   validation_strictness: z.enum(["basic", "standard", "strict"]).optional().default("standard").describe("Validation requirements level")
 };
 
-server.tool(
+server.registerTool(
   "context-assemble-prp",
-  `📋 COMPREHENSIVE PRP GENERATION - Enhanced from original .claude/commands/generate-prp.md + PRPs/templates/prp_base.md
+  {
+    title: "Context Assemble PRP",
+    description: `📋 COMPREHENSIVE PRP GENERATION - Enhanced from original .claude/commands/generate-prp.md + PRPs/templates/prp_base.md
 
 ORIGINAL WORKFLOW ENHANCED (212 lines of template intelligence):
 - Uses research findings to create context-rich implementation plans
@@ -495,7 +601,8 @@ PRP GENERATION PROCESS (from original):
 5. **MongoDB Enhancement** - Add collaborative learning and success metrics
 
 USAGE: Call AFTER context-research to create implementation-ready PRPs with full context.`,
-  contextAssemblePRPSchema,
+    inputSchema: contextAssemblePRPSchema,
+  },
   async (args) => {
     try {
       const {
