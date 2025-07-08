@@ -231,106 +231,52 @@ Your AI assistant has access to these powerful tools:
 
 **Just mention what you want to build - the AI knows how to use these tools!** 🧠
 
-## 🚀 Bulletproof Installation
+## 🚀 **Super Easy Installation**
 
-### 🎯 Interactive Install (RECOMMENDED - ZERO-ERROR GUARANTEED!)
-```bash
-# Download and run interactively for best experience
-wget https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh
-chmod +x install.sh
-./install.sh
-```
+### **One Command. Zero Configuration. Perfect Setup.**
 
-**🚨 BULLETPROOF INSTALLATION FEATURES:**
-- 🛡️ **Robust input validation** - prevents empty or invalid credentials
-- 🔄 **Smart retry loops** - guides you to correct input every time
-- 🔍 **Format validation** - ensures OpenAI keys start with 'sk-'
-- 🧹 **Auto-cleanup** - removes any corrupted environment variables
-- ✅ **Perfect shell integration** - works with zsh, bash, and fish
-- 🎉 **Interactive credential collection** - just paste when prompted!
-
-### Alternative: One-Line Install (Non-Interactive)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh | bash
 ```
-**Note:** This will install the package but require manual environment variable setup.
 
-### Option 2: Manual Install
-```bash
-npm install -g mcp-context-engineering
-```
+**What this does:**
+- ✅ **Installs the package globally** via npm
+- ✅ **Interactive credential setup** - just paste your MongoDB connection string and OpenAI API key
+- ✅ **Automatic database setup** - creates vector indexes and sample data
+- ✅ **Perfect shell integration** - works with zsh, bash, and fish
+- ✅ **Zero-error validation** - prevents invalid inputs and guides you to success
 
-## ⚙️ Bulletproof Interactive Setup
+**That's it! One command and you're ready to go.** 🎉
 
-### 1. Set Environment Variables (Automatically Done by Install Script!)
-```bash
-export MDB_MCP_CONNECTION_STRING='your-mongodb-connection-string'
-export MDB_MCP_OPENAI_API_KEY='your-openai-api-key'
-```
-**💡 The install script handles this automatically with validation:**
-- ✅ **Prevents empty inputs** with helpful error messages
-- ✅ **Validates OpenAI API key format** (must start with 'sk-')
-- ✅ **Sets variables for current session AND persistence**
-- ✅ **Cleans up any existing corrupted variables**
-- ✅ **Formats perfectly for your shell**
+## ⚙️ **AI Assistant Setup**
 
-### 2. Interactive Database Setup
-```bash
-mcp-context-engineering setup-database
-```
-**🎯 Beautiful Interactive Experience:**
-- Step-by-step wizard guides you through everything
-- Automatic MongoDB Atlas connection testing
-- 2025 Vector Search index creation with best practices
-- Helpful error messages and troubleshooting
-- Celebration when setup completes!
+### **Add to Your AI Assistant Configuration**
 
-### 3. Interactive Sample Data Generation
-```bash
-mcp-context-engineering generate-sample-data
-```
-**🧠 Intelligent Sample Data:**
-- Real OpenAI embeddings for testing
-- Interactive prompts for user control
-- Comprehensive sample patterns and research
-- Ready-to-test vector search capabilities
-
-### 3. Configure Your AI Assistant
-
-#### Claude Desktop
-Add to your `claude_desktop_config.json`:
+**Claude Desktop** (`claude_desktop_config.json`):
 ```json
 {
   "mcpServers": {
     "context-engineering": {
-      "command": "mcp-context-engineering",
-      "env": {
-        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
-        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
-      }
+      "command": "mcp-context-engineering"
     }
   }
 }
 ```
 
-#### Cursor
-Add to your MCP configuration:
+**Cursor/VS Code** (MCP settings):
 ```json
 {
   "mcpServers": {
     "context-engineering": {
-      "command": "mcp-context-engineering",
-      "env": {
-        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
-        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
-      }
+      "command": "mcp-context-engineering"
     }
   }
 }
 ```
 
-#### VS Code / Windsurf / Other MCP Clients
-See [examples/mcp-configs/](examples/mcp-configs/) for more configuration examples.
+**That's it!** Environment variables are automatically loaded from your shell.
+
+See [examples/mcp-configs/](examples/mcp-configs/) for more AI assistant configurations.
 
 ## 📚 **Using Examples Effectively**
 
