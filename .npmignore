@@ -1,0 +1,79 @@
+# NPM IGNORE - Controls what gets published to npm registry
+# Only include essential files for end users
+
+# Source files (users don't need TypeScript source)
+src/
+tsconfig.json
+
+# Development files
+.gitignore
+.git/
+.github/
+
+# Internal documentation and planning
+archive-*/
+TRANSFORMATION_*.md
+FINAL_ANALYSIS_*.md
+INDUSTRY_SHOCKING_*.md
+NEW_CHAT_*.md
+MCP_TOOLS_EXPLANATION.md
+README-FIXED.md
+PRODUCTION_STRUCTURE.md
+context-engineering-intro-referance/
+docs/internal/
+
+# Development scripts
+scripts/safe-cleanup.js
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs and runtime
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Test and coverage
+coverage/
+.nyc_output
+test/
+tests/
+*.test.js
+*.test.ts
+
+# Environment files
+.env*
+
+# Python legacy
+venv/
+venv_linux/
+__pycache__/
+.ruff_cache/
+.pytest_cache/
+
+# Build artifacts that shouldn't be in npm
+node_modules/
+
+# Keep only these essential files for npm:
+# - dist/ (compiled code)
+# - examples/ (user examples)
+# - templates/ (user templates)  
+# - scripts/setup-database.js
+# - scripts/generate-sample-data.js
+# - scripts/generate-prp.js
+# - scripts/create-feature.js
+# - package.json
+# - README.md
+# - LICENSE
+# - docs/CORRECT_MCP_WORKFLOW.md
+# - docs/UNIVERSAL_AI_RULES.md

@@ -452,35 +452,39 @@ server.registerTool(
     title: "Context Research",
     description: `🔍 COMPREHENSIVE RESEARCH ENGINE - Enhanced from original .claude/commands/generate-prp.md
 
-RESEARCH METHODOLOGY (30+ minute depth from original):
+REPLICATES ORIGINAL 30+ MINUTE RESEARCH METHODOLOGY:
 
-**Phase 1: MongoDB Intelligence** (Instant)
+**🧠 Phase 1: MongoDB Intelligence** (Instant - This Tool)
 - Search collaborative knowledge base for proven patterns
 - Find similar implementations with success rates
 - Identify relevant rules and best practices
-- Leverage community-validated solutions
+- Leverage community-validated solutions with gotchas
 
-**Phase 2: Codebase Analysis** (AI Assistant Required)
-⚠️  IMPORTANT: This tool provides MongoDB research. For complete research matching the original:
-1. Ask AI assistant to search codebase for similar features/patterns
-2. Request identification of files to reference in PRP
-3. Ask for existing conventions and test patterns
-4. Have AI assistant note integration requirements
+**🔍 Phase 2: Codebase Analysis** (AI Assistant Required)
+CRITICAL: After calling this tool, AI assistant must perform:
+1. Search codebase for similar features/patterns using codebase-retrieval
+2. Identify existing files to reference in PRP
+3. Note current conventions and architectural patterns
+4. Check existing test patterns for validation approach
+5. Find integration points and dependencies
 
-**Phase 3: External Research** (AI Assistant Required)
-⚠️  IMPORTANT: This tool provides MongoDB research. For complete research matching the original:
-1. Ask AI assistant to search online for similar features/patterns
-2. Request library documentation with specific URLs
-3. Ask for implementation examples (GitHub/StackOverflow/blogs)
-4. Have AI assistant find best practices and common pitfalls
+**🌐 Phase 3: External Research** (AI Assistant Required)
+CRITICAL: After calling this tool, AI assistant must perform:
+1. Search online for similar features/patterns using web-search
+2. Find library documentation with specific URLs
+3. Locate implementation examples (GitHub/StackOverflow/blogs)
+4. Research best practices and common pitfalls
+5. Identify version-specific considerations
 
-**USAGE PATTERN for Original Research Depth:**
-1. Call context-research (this tool) for MongoDB intelligence
-2. Ask AI assistant: "Search codebase for similar patterns to [feature]"
-3. Ask AI assistant: "Find external documentation and examples for [feature]"
-4. Call context-assemble-prp with all research combined
+**📋 COMPLETE WORKFLOW for Original Research Depth:**
+1. Call context-research (this tool) → Get MongoDB intelligence
+2. AI searches codebase → Find existing patterns to follow
+3. AI searches web → Get documentation and examples
+4. Call context-assemble-prp → Generate comprehensive PRP
+5. AI implements → Following PRP with validation loops
 
-This tool provides the MongoDB intelligence layer. Combine with AI assistant codebase/web research for full original methodology.`,
+**🎯 ORIGINAL METHODOLOGY PRESERVED:**
+This tool provides the MongoDB intelligence foundation. The AI assistant orchestrates the complete research process, just like the original .claude/commands but with enhanced collaborative intelligence.`,
     inputSchema: contextResearchSchema,
   },
   async (args) => {
@@ -513,45 +517,99 @@ This tool provides the MongoDB intelligence layer. Combine with AI assistant cod
       // Calculate comprehensive summary
       const summary = calculateSummary(patterns, rules, research);
 
-      // Add research completion guidance for AI assistant
+      // Enhanced research completion guidance matching original methodology
       const researchGuidance = {
         mongodb_research_complete: true,
+        original_methodology_enhanced: true,
+        ultrathink_phase_required: true,
         next_steps_for_original_depth: [
           {
-            phase: "Codebase Analysis",
-            action: `Search your codebase for similar features to: "${feature_request}"`,
+            phase: "🔍 Codebase Analysis (Original Phase 1)",
+            priority: "CRITICAL - Required for PRP context",
+            action: `Use codebase-retrieval tool to search for patterns similar to: "${feature_request}"`,
+            specific_searches: [
+              `Search for: "${feature_request.split(' ').slice(0, 2).join(' ')}" implementation patterns`,
+              `Search for: similar features or modules in the codebase`,
+              `Search for: test patterns and validation approaches`,
+              `Search for: configuration and setup patterns`,
+              `Search for: error handling and edge case patterns`
+            ],
             details: [
-              "Look for existing implementations of similar functionality",
-              "Identify files that should be referenced in the PRP",
-              "Note existing conventions and patterns to follow",
-              "Check test patterns for validation approach",
-              "Find integration points and dependencies"
-            ]
+              "🎯 FIND: Existing implementations of similar functionality",
+              "📁 IDENTIFY: Specific files to reference in PRP Documentation section",
+              "📋 NOTE: Current conventions, naming patterns, and architectural decisions",
+              "🧪 CHECK: Test patterns, mocking approaches, and validation strategies",
+              "🔗 MAP: Integration points, dependencies, and configuration requirements",
+              "⚠️ CAPTURE: Known gotchas, edge cases, and common pitfalls in this codebase"
+            ],
+            expected_output: "List of files to reference, patterns to follow, gotchas to avoid"
           },
           {
-            phase: "External Research",
-            action: `Search online for: "${feature_request}" best practices`,
+            phase: "🌐 External Research (Original Phase 2)",
+            priority: "CRITICAL - Required for comprehensive context",
+            action: `Use web-search tool to research: "${feature_request}" implementation best practices`,
+            specific_searches: [
+              `"${feature_request}" official documentation`,
+              `"${feature_request}" implementation examples GitHub`,
+              `"${feature_request}" best practices tutorial`,
+              `"${feature_request}" common pitfalls gotchas`,
+              `"${feature_request}" ${technology_stack.join(' ')} integration`
+            ],
             details: [
-              "Find library documentation with specific URLs",
-              "Look for implementation examples on GitHub/StackOverflow",
-              "Research best practices and common pitfalls",
-              "Find recent blog posts and tutorials",
-              "Check for version-specific considerations"
-            ]
+              "📚 FIND: Official library/framework documentation with specific URLs",
+              "💡 LOCATE: Implementation examples on GitHub, StackOverflow, dev blogs",
+              "⚡ RESEARCH: Best practices, performance considerations, security implications",
+              "⚠️ IDENTIFY: Common pitfalls, version compatibility issues, gotchas",
+              "🔧 CHECK: Integration patterns with your technology stack",
+              "📖 GATHER: Recent tutorials, migration guides, troubleshooting tips"
+            ],
+            expected_output: "URLs to documentation, example implementations, gotchas list"
           },
           {
-            phase: "Research Integration",
-            action: "Combine all research sources before calling context-assemble-prp",
+            phase: "📋 Research Integration (Original Phase 3)",
+            priority: "REQUIRED - Before calling context-assemble-prp",
+            action: "Synthesize all research into comprehensive context for PRP generation",
+            integration_checklist: [
+              "✅ MongoDB patterns analyzed and prioritized by success rate",
+              "✅ Codebase patterns identified with specific file references",
+              "✅ External documentation gathered with URLs",
+              "✅ Implementation examples collected and analyzed",
+              "✅ Gotchas and pitfalls documented from all sources",
+              "✅ Technology stack compatibility verified",
+              "✅ Validation and testing approaches defined"
+            ],
             details: [
-              "Merge MongoDB patterns with codebase findings",
-              "Include external documentation URLs in PRP context",
-              "Note any conflicts between different approaches",
-              "Prioritize proven patterns with high success rates",
-              "Prepare comprehensive context for PRP generation"
-            ]
+              "🔄 MERGE: MongoDB patterns with codebase findings for consistency",
+              "📎 INCLUDE: All documentation URLs in PRP context section",
+              "⚖️ RESOLVE: Any conflicts between different approaches",
+              "🎯 PRIORITIZE: Proven patterns with highest success rates",
+              "📝 PREPARE: Comprehensive context for sophisticated PRP generation",
+              "🧠 SYNTHESIZE: Create unified implementation strategy"
+            ],
+            expected_output: "Complete research summary ready for context-assemble-prp"
           }
         ],
-        estimated_research_time: "20-30 minutes for original depth",
+        ultrathink_phase: {
+          phase: "🧠 ULTRATHINK (CRITICAL - Before calling context-assemble-prp)",
+          priority: "MANDATORY - Original methodology line 55",
+          action: "Think hard before generating PRP. Create comprehensive plan addressing all requirements.",
+          requirements: [
+            "🎯 ANALYZE: All research findings and identify patterns",
+            "🔄 SYNTHESIZE: MongoDB patterns + codebase findings + web research",
+            "📋 PLAN: Break down complex tasks into manageable steps",
+            "🎨 DESIGN: Choose optimal implementation approach",
+            "⚠️ IDENTIFY: Potential gotchas and integration challenges",
+            "🧪 STRATEGY: Define testing and validation approach",
+            "📊 CONFIDENCE: Assess implementation complexity and success probability"
+          ],
+          todowrite_integration: "Use task management tools to create and track implementation plan",
+          expected_output: "Comprehensive implementation strategy ready for PRP generation"
+        },
+        methodology_comparison: {
+          original_claude_commands: "30+ minutes manual research + ULTRATHINK",
+          mcp_enhanced_version: "Instant MongoDB intelligence + AI-guided research + ULTRATHINK",
+          advantage: "Faster startup with collaborative learning + preserved planning depth"
+        },
         mongodb_intelligence_summary: summary
       };
 
@@ -738,23 +796,44 @@ server.registerTool(
   "context-assemble-prp",
   {
     title: "Context Assemble PRP",
-    description: `📋 COMPREHENSIVE PRP GENERATION - Enhanced from original .claude/commands/generate-prp.md + PRPs/templates/prp_base.md
+    description: `📋 SOPHISTICATED PRP GENERATION - Enhanced from original PRPs/templates/prp_base.md (212 lines)
 
-ORIGINAL WORKFLOW ENHANCED (212 lines of template intelligence):
-- Uses research findings to create context-rich implementation plans
-- Includes ALL necessary documentation, examples, and caveats
-- Provides executable tests/validation loops for iterative refinement
-- Follows "Context is King" principle with progressive success approach
-- Incorporates MongoDB collaborative intelligence for proven patterns
+REPLICATES ORIGINAL TEMPLATE SOPHISTICATION WITH MONGODB ENHANCEMENT:
 
-PRP GENERATION PROCESS (from original):
-1. **Load Research** - Use context-research results for comprehensive context
-2. **Template Selection** - Choose optimal template based on complexity and preferences
-3. **Context Assembly** - Include all documentation, examples, gotchas, and validation loops
-4. **Validation Design** - Create executable tests and refinement checkpoints
-5. **MongoDB Enhancement** - Add collaborative learning and success metrics
+**🎯 Core Principles (from original):**
+1. **Context is King** - Include ALL necessary documentation, examples, and caveats
+2. **Validation Loops** - Provide executable tests/lints the AI can run and fix
+3. **Information Dense** - Use keywords and patterns from the codebase
+4. **Progressive Success** - Start simple, validate, then enhance
+5. **Global Rules** - Follow all universal AI assistant guidelines
 
-USAGE: Call AFTER context-research to create implementation-ready PRPs with full context.`,
+**📋 ORIGINAL TEMPLATE STRUCTURE PRESERVED:**
+- Goal/Why/What sections with success criteria
+- All Needed Context with YAML documentation lists
+- Current/Desired Codebase tree structures
+- Known Gotchas & Library Quirks section
+- Implementation Blueprint with pseudocode
+- Data models and structure definitions
+- Task list in completion order
+- Integration Points (DATABASE/CONFIG/ROUTES)
+- 3-Level Validation Loop (Syntax/Unit/Integration)
+- Final Validation Checklist
+- Anti-Patterns to Avoid section
+
+**🚀 MONGODB ENHANCEMENTS:**
+- Collaborative pattern intelligence with success rates
+- Community-validated gotchas and solutions
+- Proven implementation approaches
+- Success metrics and confidence scoring
+
+**⚡ USAGE:** Call AFTER complete research (context-research + codebase + web) to generate implementation-ready PRPs with original template sophistication plus collaborative intelligence.
+
+**🚨 CRITICAL REQUIREMENT:** The generated PRP must be COMPLETELY SELF-CONTAINED like the original methodology. ALL context must be embedded in the PRP because the executing AI may only have access to the PRP content. This includes:
+- Actual codebase tree structure (not instructions to run tree)
+- Actual file contents and examples (not instructions to search)
+- Actual documentation URLs and key excerpts
+- Actual gotchas and specific library quirks
+- Actual validation commands for the specific project`,
     inputSchema: contextAssemblePRPSchema,
   },
   async (args) => {
@@ -938,6 +1017,35 @@ function generateDynamicPRP(
 
   prp += `\`\`\`\n\n`;
 
+  // Current Codebase tree section (AI Assistant fills with actual content)
+  prp += `### Current Codebase tree (run \`tree\` in the root of the project)\n`;
+  prp += `\`\`\`bash\n`;
+  prp += `# AI Assistant: Run tree command and replace this with actual output\n`;
+  prp += `# Command: tree -I 'node_modules|dist|.git|__pycache__' -L 3\n`;
+  prp += `# This section will contain the actual project structure\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Desired Codebase tree section (AI Assistant plans structure)
+  prp += `### Desired Codebase tree with files to be added and responsibility of file\n`;
+  prp += `\`\`\`bash\n`;
+  prp += `# AI Assistant: Plan the file structure for ${featureRequest}\n`;
+  prp += `# Based on research findings and MongoDB patterns\n`;
+  prp += `\n`;
+  prp += `# Planned structure:\n`;
+  prp += `src/\n`;
+  prp += `├── ${featureRequest.toLowerCase().replace(/\s+/g, '_')}/\n`;
+  prp += `│   ├── __init__.py              # Package initialization\n`;
+  prp += `│   ├── main.py                 # Core ${featureRequest} implementation\n`;
+  prp += `│   ├── models.py               # Data models and schemas\n`;
+  prp += `│   ├── utils.py                # Helper functions\n`;
+  prp += `│   └── config.py               # Configuration management\n`;
+  prp += `├── api/\n`;
+  prp += `│   └── ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_routes.py  # API endpoints\n`;
+  prp += `└── tests/\n`;
+  prp += `    ├── test_${featureRequest.toLowerCase().replace(/\s+/g, '_')}.py     # Unit tests\n`;
+  prp += `    └── test_integration.py     # Integration tests\n`;
+  prp += `\`\`\`\n\n`;
+
   // Known Gotchas section (critical from original)
   prp += `### Known Gotchas & Library Quirks\n`;
   prp += `\`\`\`python\n`;
@@ -952,28 +1060,195 @@ function generateDynamicPRP(
   }
   prp += `# PATTERN: Follow universal AI assistant rules for consistency\n`;
   prp += `# GOTCHA: Always validate inputs and handle edge cases\n`;
+  prp += `# GOTCHA: Check existing patterns before creating new ones\n`;
+  prp += `# CRITICAL: Read all documentation URLs before implementation\n`;
   prp += `\`\`\`\n\n`;
 
   // Implementation Blueprint section (sophisticated structure)
   prp += `## Implementation Blueprint\n\n`;
 
-  // Add patterns as implementation guidance
+  // Data models and structure section (from original template)
+  prp += `### Data models and structure\n\n`;
+  prp += `Create the core data models to ensure type safety and consistency.\n`;
+  prp += `\`\`\`python\n`;
+  prp += `# Examples based on your technology stack:\n`;
+  prp += `# - ORM models (SQLAlchemy, Django, etc.)\n`;
+  prp += `# - Pydantic models for validation\n`;
+  prp += `# - Pydantic schemas for API responses\n`;
+  prp += `# - Custom validators for business logic\n`;
+  prp += `# - Type definitions for TypeScript\n`;
+  prp += `# - Interface definitions\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Task list section (sophisticated FIND/INJECT/PRESERVE patterns from original)
+  prp += `### List of tasks to be completed to fulfill the PRP in the order they should be completed\n\n`;
+  prp += `\`\`\`yaml\n`;
+  prp += `Task 1: Setup and Configuration\n`;
+  prp += `MODIFY config/settings.py:\n`;
+  prp += `  - FIND pattern: "class Settings"\n`;
+  prp += `  - INJECT after line containing "__init__"\n`;
+  prp += `  - PRESERVE existing configuration structure\n`;
+  prp += `\n`;
+  prp += `CREATE src/${featureRequest.toLowerCase().replace(/\s+/g, '_')}/:\n`;
+  prp += `  - MIRROR pattern from: src/similar_feature/ (if exists)\n`;
+  prp += `  - MODIFY: adapt to new feature requirements\n`;
+  prp += `  - KEEP: error handling pattern identical\n`;
+  prp += `\n`;
+  prp += `INSTALL dependencies:\n`;
+  prp += `  - USE package manager (npm/pip/cargo)\n`;
+  prp += `  - PATTERN: Follow existing dependency management\n`;
+  prp += `  - PRESERVE: version compatibility\n`;
+  prp += `\n`;
+  prp += `Task 2: Core Data Models\n`;
+  prp += `CREATE src/${featureRequest.toLowerCase().replace(/\s+/g, '_')}/models.py:\n`;
+  prp += `  - MIRROR pattern from: src/existing_models.py\n`;
+  prp += `  - FIND pattern: "class BaseModel"\n`;
+  prp += `  - PRESERVE: validation patterns and type hints\n`;
+  prp += `  - INJECT: new model definitions\n`;
+  prp += `\n`;
+  prp += `Task 3: Core Implementation\n`;
+  prp += `CREATE src/${featureRequest.toLowerCase().replace(/\s+/g, '_')}/main.py:\n`;
+  prp += `  - FIND pattern: existing implementation approaches\n`;
+  prp += `  - MIRROR pattern from: similar feature implementation\n`;
+  prp += `  - PRESERVE: existing method signatures\n`;
+  prp += `  - INJECT: new functionality without breaking changes\n`;
+  prp += `\n`;
+  prp += `MODIFY src/api/routes.py:\n`;
+  prp += `  - FIND pattern: "router.include_router"\n`;
+  prp += `  - INJECT after existing routes\n`;
+  prp += `  - PRESERVE: existing route structure\n`;
+  prp += `\n`;
+  prp += `Task 4: Integration Points\n`;
+  prp += `MODIFY src/database/models.py:\n`;
+  prp += `  - FIND pattern: existing table definitions\n`;
+  prp += `  - INJECT: new table/column definitions\n`;
+  prp += `  - PRESERVE: existing relationships\n`;
+  prp += `\n`;
+  prp += `CREATE migration files:\n`;
+  prp += `  - PATTERN: Follow existing migration structure\n`;
+  prp += `  - PRESERVE: data integrity\n`;
+  prp += `\n`;
+  prp += `Task 5: Testing Implementation\n`;
+  prp += `CREATE tests/test_${featureRequest.toLowerCase().replace(/\s+/g, '_')}.py:\n`;
+  prp += `  - MIRROR pattern from: tests/test_similar_feature.py\n`;
+  prp += `  - FIND pattern: existing test structure\n`;
+  prp += `  - PRESERVE: test naming conventions\n`;
+  prp += `  - COVER: happy path, edge cases, error conditions\n`;
+  prp += `\n`;
+  prp += `Task 6: Documentation and Validation\n`;
+  prp += `MODIFY README.md:\n`;
+  prp += `  - FIND pattern: "## Features"\n`;
+  prp += `  - INJECT: new feature documentation\n`;
+  prp += `  - PRESERVE: existing documentation structure\n`;
+  prp += `\n`;
+  prp += `RUN validation loops:\n`;
+  prp += `  - EXECUTE: all validation commands\n`;
+  prp += `  - VERIFY: all success criteria met\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Per task pseudocode section (sophisticated from original template)
+  prp += `### Per task pseudocode as needed added to each task\n\n`;
+  prp += `\`\`\`python\n`;
+  prp += `# Task 1: Setup and Configuration\n`;
+  prp += `# Pseudocode with CRITICAL details - don't write entire code\n`;
+  prp += `def setup_feature_config():\n`;
+  prp += `    # PATTERN: Always validate configuration first (see config/validators.py)\n`;
+  prp += `    config = load_config()  # raises ConfigError if invalid\n`;
+  prp += `    \n`;
+  prp += `    # GOTCHA: Environment variables must be set before import\n`;
+  prp += `    os.environ.setdefault('FEATURE_ENABLED', 'true')\n`;
+  prp += `    \n`;
+  prp += `    # CRITICAL: Database connection pool must be initialized\n`;
+  prp += `    init_db_pool(config.database_url)  # see src/db/pool.py\n`;
+  prp += `\n`;
+  prp += `# Task 3: Core Implementation\n`;
+  prp += `async def ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_handler(request: Request) -> Response:\n`;
+  prp += `    # PATTERN: Always validate input first (see src/validators.py)\n`;
+  prp += `    validated = validate_request(request)  # raises ValidationError\n`;
+  prp += `    \n`;
+  prp += `    # GOTCHA: This API requires rate limiting\n`;
+  prp += `    async with rate_limiter.acquire():  # see src/middleware/rate_limit.py\n`;
+  prp += `        # PATTERN: Use existing retry decorator\n`;
+  prp += `        @retry(attempts=3, backoff=exponential)\n`;
+  prp += `        async def _inner():\n`;
+  prp += `            # CRITICAL: External API returns 429 if >10 req/sec\n`;
+  prp += `            await asyncio.sleep(0.1)  # Rate limiting\n`;
+  prp += `            return await process_request(validated)\n`;
+  prp += `        \n`;
+  prp += `        result = await _inner()\n`;
+  prp += `    \n`;
+  prp += `    # PATTERN: Standardized response format\n`;
+  prp += `    return format_response(result)  # see src/utils/responses.py\n`;
+  prp += `\n`;
+  prp += `# Task 5: Testing Implementation\n`;
+  prp += `def test_${featureRequest.toLowerCase().replace(/\s+/g, '_')}_happy_path():\n`;
+  prp += `    """Basic functionality works"""\n`;
+  prp += `    # PATTERN: Use existing test fixtures (see conftest.py)\n`;
+  prp += `    result = feature_handler("valid_input")\n`;
+  prp += `    assert result.status == "success"\n`;
+  prp += `    \n`;
+  prp += `def test_validation_error():\n`;
+  prp += `    """Invalid input raises ValidationError"""\n`;
+  prp += `    # GOTCHA: Must test specific error types\n`;
+  prp += `    with pytest.raises(ValidationError, match="specific_pattern"):\n`;
+  prp += `        feature_handler("")\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Advanced Pattern Intelligence (INDUSTRY-SHOCKING ENHANCEMENT)
   if (selected_patterns.length > 0) {
-    prp += `### Proven Implementation Patterns\n\n`;
-    selected_patterns.forEach((pattern: any, index: number) => {
-      prp += `#### Pattern ${index + 1}: ${pattern.pattern_name || 'Unnamed Pattern'}\n`;
-      prp += `**Success Rate:** ${Math.round((pattern.success_metrics?.success_rate || 0) * 100)}%\n`;
-      prp += `**Complexity:** ${pattern.complexity_level || 'Unknown'}\n`;
+    prp += `### 🧠 Advanced Pattern Intelligence\n\n`;
+
+    // Sort patterns by success rate and relevance
+    const sortedPatterns = selected_patterns.sort((a: any, b: any) => {
+      const aScore = (a.success_metrics?.success_rate || 0) * (a.relevance_score || 0.5);
+      const bScore = (b.success_metrics?.success_rate || 0) * (b.relevance_score || 0.5);
+      return bScore - aScore;
+    });
+
+    sortedPatterns.forEach((pattern: any, index: number) => {
+      const successRate = Math.round((pattern.success_metrics?.success_rate || 0) * 100);
+      const relevanceScore = Math.round((pattern.relevance_score || 0.5) * 100);
+      const confidenceIndicator = successRate >= 90 ? '🟢' : successRate >= 70 ? '🟡' : '🔴';
+
+      prp += `#### ${confidenceIndicator} Pattern ${index + 1}: ${pattern.pattern_name || 'Unnamed Pattern'}\n`;
+      prp += `**Success Rate:** ${successRate}% | **Relevance:** ${relevanceScore}% | **Complexity:** ${pattern.complexity_level || 'Unknown'}\n`;
       prp += `**Description:** ${pattern.description || 'No description available'}\n\n`;
 
+      // Advanced implementation guidance
       if (pattern.implementation_steps) {
-        prp += `**Implementation Steps:**\n`;
+        prp += `**🔧 Implementation Steps:**\n`;
         pattern.implementation_steps.forEach((step: string, stepIndex: number) => {
           prp += `${stepIndex + 1}. ${step}\n`;
         });
         prp += `\n`;
       }
+
+      // Success factors
+      if (pattern.success_factors) {
+        prp += `**✅ Success Factors:**\n`;
+        pattern.success_factors.forEach((factor: string) => {
+          prp += `- ${factor}\n`;
+        });
+        prp += `\n`;
+      }
+
+      // Common pitfalls
+      if (pattern.common_pitfalls) {
+        prp += `**⚠️ Common Pitfalls:**\n`;
+        pattern.common_pitfalls.forEach((pitfall: string) => {
+          prp += `- ${pitfall}\n`;
+        });
+        prp += `\n`;
+      }
     });
+
+    // Pattern combination recommendations
+    if (selected_patterns.length > 1) {
+      prp += `### 🔗 Pattern Combination Strategy\n\n`;
+      prp += `**Recommended Approach:** Combine patterns in order of success rate and complexity.\n`;
+      prp += `**Integration Points:** Look for overlapping implementation steps to optimize development.\n`;
+      prp += `**Risk Mitigation:** Start with highest success rate pattern as foundation.\n\n`;
+    }
   }
 
   // Add rules section
@@ -1005,6 +1280,30 @@ function generateDynamicPRP(
     });
   }
 
+  // Integration Points section (from original template)
+  prp += `### Integration Points\n`;
+  prp += `\`\`\`yaml\n`;
+  prp += `DATABASE:\n`;
+  prp += `  - migration: "Add necessary database changes"\n`;
+  prp += `  - index: "CREATE INDEX if needed for performance"\n`;
+  prp += `  - constraints: "Add foreign keys and constraints"\n`;
+  prp += `\n`;
+  prp += `CONFIG:\n`;
+  prp += `  - add to: config/settings file\n`;
+  prp += `  - pattern: "FEATURE_CONFIG = os.getenv('FEATURE_CONFIG', 'default')"\n`;
+  prp += `  - environment: "Add to .env.example"\n`;
+  prp += `\n`;
+  prp += `ROUTES/ENDPOINTS:\n`;
+  prp += `  - add to: main router/app file\n`;
+  prp += `  - pattern: "router.include_router(feature_router, prefix='/feature')"\n`;
+  prp += `  - middleware: "Add authentication/validation if needed"\n`;
+  prp += `\n`;
+  prp += `DEPENDENCIES:\n`;
+  prp += `  - install: "Use package manager for new dependencies"\n`;
+  prp += `  - update: "requirements.txt, package.json, etc."\n`;
+  prp += `  - version: "Pin versions for stability"\n`;
+  prp += `\`\`\`\n\n`;
+
   // Validation Loop section (critical from original 212-line template)
   prp += `## Validation Loop\n\n`;
 
@@ -1020,18 +1319,38 @@ function generateDynamicPRP(
   prp += `# Expected: No errors. If errors, READ the error and fix.\n`;
   prp += `\`\`\`\n\n`;
 
-  prp += `### Level 2: Unit Tests\n`;
-  prp += `\`\`\`bash\n`;
-  prp += `# CREATE comprehensive test cases following project patterns:\n`;
-  prp += `# - test_happy_path(): Basic functionality works\n`;
-  prp += `# - test_validation_error(): Invalid input handled gracefully\n`;
-  prp += `# - test_edge_cases(): Boundary conditions covered\n`;
-  prp += `# - test_error_handling(): Failures handled appropriately\n`;
+  prp += `### Level 2: Unit Tests each new feature/file/function use existing test patterns\n`;
+  prp += `\`\`\`python\n`;
+  prp += `# CREATE test_${featureRequest.toLowerCase().replace(/\s+/g, '_')}.py with these test cases:\n`;
+  prp += `def test_happy_path():\n`;
+  prp += `    """Basic functionality works"""\n`;
+  prp += `    result = ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_handler("valid_input")\n`;
+  prp += `    assert result.status == "success"\n`;
+  prp += `    assert result.data is not None\n`;
   prp += `\n`;
+  prp += `def test_validation_error():\n`;
+  prp += `    """Invalid input raises ValidationError"""\n`;
+  prp += `    with pytest.raises(ValidationError, match="specific_pattern"):\n`;
+  prp += `        ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_handler("")\n`;
+  prp += `\n`;
+  prp += `def test_external_api_timeout():\n`;
+  prp += `    """Handles timeouts gracefully"""\n`;
+  prp += `    with mock.patch('external_api.call', side_effect=TimeoutError):\n`;
+  prp += `        result = ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_handler("valid")\n`;
+  prp += `        assert result.status == "error"\n`;
+  prp += `        assert "timeout" in result.message\n`;
+  prp += `\n`;
+  prp += `def test_edge_case_boundary():\n`;
+  prp += `    """Boundary conditions handled correctly"""\n`;
+  prp += `    # Test with empty, null, max length inputs\n`;
+  prp += `    assert ${featureRequest.toLowerCase().replace(/\s+/g, '_')}_handler(None).status == "error"\n`;
+  prp += `\`\`\`\n`;
+  prp += `\n`;
+  prp += `\`\`\`bash\n`;
   prp += `# Run and iterate until passing:\n`;
-  prp += `npm test              # JavaScript/TypeScript projects\n`;
-  prp += `pytest tests/ -v      # Python projects\n`;
-  prp += `# If failing: Read error, understand root cause, fix code, re-run\n`;
+  prp += `pytest test_${featureRequest.toLowerCase().replace(/\s+/g, '_')}.py -v  # Python\n`;
+  prp += `npm test ${featureRequest.toLowerCase().replace(/\s+/g, '_')}              # JavaScript/TypeScript\n`;
+  prp += `# If failing: Read error, understand root cause, fix code, re-run (never mock to pass)\n`;
   prp += `\`\`\`\n\n`;
 
   prp += `### Level 3: Integration Test\n`;
@@ -1085,9 +1404,141 @@ function generateDynamicPRP(
   prp += `- **Universal AI compatibility** via MCP protocol\n`;
   prp += `- **Collaborative learning** from community patterns\n\n`;
 
-  prp += `🚀 **This represents the evolution from static context to dynamic, intelligent, collaborative intelligence!**\n`;
+  prp += `🚀 **This represents the evolution from static context to dynamic, intelligent, collaborative intelligence!**\n\n`;
+
+  // Add PRP confidence scoring (from original line 67)
+  const confidence = calculatePRPConfidence(template, assembledContext, relevant_research);
+  prp += `## PRP Confidence Score\n\n`;
+  prp += `**Overall Confidence: ${confidence.overall_confidence}/10** (confidence level to succeed in one-pass implementation)\n\n`;
+  prp += `### Confidence Breakdown:\n`;
+  prp += `- **Template Quality:** ${Math.round(confidence.template_confidence * 10)}/10\n`;
+  prp += `- **Context Completeness:** ${Math.round(confidence.context_confidence * 10)}/10\n`;
+  prp += `- **Pattern Success Rate:** ${Math.round(confidence.pattern_confidence * 10)}/10\n`;
+  prp += `- **Rule Coverage:** ${Math.round(confidence.rule_confidence * 10)}/10\n`;
+  prp += `- **Research Freshness:** ${Math.round(confidence.research_confidence * 10)}/10\n\n`;
+
+  if (confidence.overall_confidence >= 8) {
+    prp += `✅ **HIGH CONFIDENCE** - Ready for one-pass implementation\n`;
+  } else if (confidence.overall_confidence >= 6) {
+    prp += `⚠️ **MEDIUM CONFIDENCE** - May require iteration during implementation\n`;
+  } else {
+    prp += `🔴 **LOW CONFIDENCE** - Consider additional research before implementation\n`;
+  }
+
+  prp += `\n---\n\n`;
+  prp += `**Remember: The goal is one-pass implementation success through comprehensive context.**\n`;
+
+  // Real-time PRP quality validation (INDUSTRY-SHOCKING ENHANCEMENT)
+  const qualityValidation = validatePRPQuality(prp);
+
+  // Add quality report to PRP
+  prp += `\n## 🔍 PRP Quality Report (Real-time Validation)\n\n`;
+  prp += `**Quality Score: ${qualityValidation.quality_score}/10**\n\n`;
+  prp += `### Quality Breakdown:\n`;
+  prp += `- **Completeness:** ${Math.round(qualityValidation.completeness_score * 10)}/10\n`;
+  prp += `- **Sophistication:** ${Math.round(qualityValidation.sophistication_score * 10)}/10\n`;
+  prp += `- **Validation Coverage:** ${Math.round(qualityValidation.validation_score * 10)}/10\n\n`;
+
+  if (qualityValidation.missing_elements.length > 0) {
+    prp += `### ⚠️ Missing Elements:\n`;
+    qualityValidation.missing_elements.forEach((element: string) => {
+      prp += `- ${element}\n`;
+    });
+    prp += `\n`;
+  }
+
+  if (qualityValidation.enhancement_suggestions.length > 0) {
+    prp += `### 💡 Enhancement Suggestions:\n`;
+    qualityValidation.enhancement_suggestions.forEach((suggestion: string) => {
+      prp += `- ${suggestion}\n`;
+    });
+    prp += `\n`;
+  }
+
+  if (qualityValidation.quality_score >= 8) {
+    prp += `✅ **EXCELLENT QUALITY** - This PRP meets industry-leading standards!\n`;
+  } else if (qualityValidation.quality_score >= 6) {
+    prp += `⚠️ **GOOD QUALITY** - Consider implementing enhancement suggestions\n`;
+  } else {
+    prp += `🔴 **NEEDS IMPROVEMENT** - Address missing elements before implementation\n`;
+  }
 
   return prp;
+}
+
+// Real-time PRP Quality Validation (INDUSTRY-SHOCKING ENHANCEMENT)
+function validatePRPQuality(prpContent: string): any {
+  const validation = {
+    quality_score: 0,
+    completeness_score: 0,
+    sophistication_score: 0,
+    validation_score: 0,
+    missing_elements: [] as string[],
+    enhancement_suggestions: [] as string[]
+  };
+
+  // Check for critical sections from original template
+  const requiredSections = [
+    'Goal', 'Why', 'What', 'All Needed Context', 'Implementation Blueprint',
+    'Data models and structure', 'List of tasks', 'Validation Loop', 'Anti-Patterns'
+  ];
+
+  const sophisticatedElements = [
+    'FIND pattern', 'INJECT', 'PRESERVE', 'MIRROR pattern', 'PATTERN:', 'GOTCHA:', 'CRITICAL:'
+  ];
+
+  const validationElements = [
+    'Level 1:', 'Level 2:', 'Level 3:', 'test_happy_path', 'test_validation_error'
+  ];
+
+  // Completeness check
+  let foundSections = 0;
+  requiredSections.forEach(section => {
+    if (prpContent.includes(section)) {
+      foundSections++;
+    } else {
+      validation.missing_elements.push(`Missing section: ${section}`);
+    }
+  });
+  validation.completeness_score = foundSections / requiredSections.length;
+
+  // Sophistication check
+  let foundElements = 0;
+  sophisticatedElements.forEach(element => {
+    if (prpContent.includes(element)) {
+      foundElements++;
+    }
+  });
+  validation.sophistication_score = Math.min(foundElements / sophisticatedElements.length, 1);
+
+  // Validation methodology check
+  let foundValidation = 0;
+  validationElements.forEach(element => {
+    if (prpContent.includes(element)) {
+      foundValidation++;
+    }
+  });
+  validation.validation_score = foundValidation / validationElements.length;
+
+  // Overall quality score
+  validation.quality_score = Math.round((
+    validation.completeness_score * 0.4 +
+    validation.sophistication_score * 0.3 +
+    validation.validation_score * 0.3
+  ) * 10);
+
+  // Enhancement suggestions
+  if (validation.completeness_score < 0.8) {
+    validation.enhancement_suggestions.push("Add missing critical sections for comprehensive context");
+  }
+  if (validation.sophistication_score < 0.6) {
+    validation.enhancement_suggestions.push("Include more FIND/INJECT/PRESERVE patterns for precise implementation");
+  }
+  if (validation.validation_score < 0.7) {
+    validation.enhancement_suggestions.push("Enhance validation loops with specific test cases and commands");
+  }
+
+  return validation;
 }
 
 // Calculate PRP confidence metrics

@@ -1,8 +1,7 @@
 # Dependencies
 node_modules/
-package-lock.json
 
-# Build outputs
+# Build outputs (include in npm, exclude from git)
 dist/
 
 # Environment variables
@@ -44,3 +43,20 @@ venv_linux
 __pycache__
 .ruff_cache
 .pytest_cache
+
+# INTERNAL/DEVELOPMENT FILES - DO NOT PUSH TO GITHUB
+archive-*/
+TRANSFORMATION_*.md
+FINAL_ANALYSIS_*.md
+INDUSTRY_SHOCKING_*.md
+NEW_CHAT_*.md
+MCP_TOOLS_EXPLANATION.md
+README-FIXED.md
+PRODUCTION_STRUCTURE.md
+context-engineering-intro-referance/
+
+# Development scripts (keep local only)
+scripts/safe-cleanup.js
+
+# Internal documentation (keep local only)
+docs/internal/

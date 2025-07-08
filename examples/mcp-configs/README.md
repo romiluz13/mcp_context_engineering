@@ -1,6 +1,26 @@
-# MCP Configuration Examples
+# 🔧 MCP Configuration Examples
 
-This directory contains configuration examples for various AI assistants that support the Model Context Protocol (MCP).
+Complete setup guides for MongoDB Context Engineering with various AI assistants.
+
+## 🚀 Quick Start
+
+1. **Install**: `npm install -g mcp-context-engineering`
+2. **Configure**: Add configuration to your AI assistant (examples below)
+3. **Use**: Say "Help me build [feature] using MongoDB Context Engineering"
+
+## ⚠️ IMPORTANT: Correct Usage
+
+**✅ RIGHT**: Natural conversation with AI assistant
+```
+"Help me build a user auth system using MongoDB Context Engineering"
+```
+
+**❌ WRONG**: Trying to run CLI commands manually
+```bash
+mcp-context-engineering generate-prp  # This won't work!
+```
+
+Only AI assistants can orchestrate the complete workflow!
 
 ## Claude Desktop
 
