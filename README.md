@@ -10,20 +10,66 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io/)
 
-## ⚡ **Quick Start (2 Minutes)**
+## ⚡ **Quick Start (3 Minutes)**
 
 ```bash
 # 1. Install globally
 npm install -g mcp-context-engineering
 
-# 2. Setup (interactive wizard)
+# 2. Setup database (interactive wizard)
 mcp-context-engineering setup-database
 
-# 3. Start using with your AI assistant!
+# 3. Configure MCP in your AI assistant (REQUIRED!)
+# See detailed instructions below ↓
+
+# 4. Start using with your AI assistant!
 # Just chat normally: "Help me build a user authentication system"
 ```
 
-**That's it!** Your AI assistant now has intelligent context engineering powers! 🚀
+**Important:** Step 3 (MCP configuration) is required for AI assistants to access our tools! 🔧
+
+## 🔧 **Step 3: MCP Configuration (REQUIRED)**
+
+### **For Cursor Users:**
+1. Open Cursor → `Ctrl/Cmd + Shift + P` → "Cursor Settings"
+2. Go to "MCP" in the sidebar
+3. Add this configuration:
+
+```json
+{
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+      }
+    }
+  }
+}
+```
+
+### **For Claude Desktop Users:**
+Add to `~/.claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "context-engineering": {
+      "command": "mcp-context-engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection-string",
+        "MDB_MCP_OPENAI_API_KEY": "your-openai-api-key"
+      }
+    }
+  }
+}
+```
+
+### **For Other AI Assistants:**
+Check our [MCP configuration examples](examples/mcp-configs/) for your specific AI assistant.
+
+**✅ Verification:** Look for a green status indicator in your AI assistant's MCP settings.
 
 ## 🌟 Revolutionary Features
 
@@ -86,7 +132,7 @@ Just talk naturally to your AI assistant:
 ## 💡 **How to Use (Super Simple!)**
 
 ### **🎯 Method 1: Chat Naturally with Your AI Assistant**
-Once installed, just talk to your AI assistant normally:
+Once installed AND configured (see MCP setup above), just talk to your AI assistant normally:
 
 ```
 👤 "Help me build a user authentication system"
@@ -100,6 +146,7 @@ Once installed, just talk to your AI assistant normally:
 ```
 
 **The AI assistant automatically uses our tools behind the scenes!** ✨
+**Note:** Requires MCP configuration (Step 3 above) to work.
 
 ### **🛠️ Method 2: Direct CLI Commands**
 
