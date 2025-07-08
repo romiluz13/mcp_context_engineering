@@ -201,17 +201,58 @@ async function generateEmbedding(text: string): Promise<number[]> {
 
 // Advanced pattern search with vector capabilities
 async function searchPatterns(
-  queryEmbedding: number[], 
-  techStack: string[], 
-  successThreshold: number, 
+  queryEmbedding: number[],
+  techStack: string[],
+  successThreshold: number,
   maxPatterns: number
 ) {
   const { mongoClient } = await initializeClients();
   const db = mongoClient!.db("context_engineering");
   const collection = db.collection("implementation_patterns");
 
-  // Phase 1: Basic search with metadata filtering
-  // TODO: Replace with vector search when Atlas Vector Search indexes are set up
+  try {
+    // Phase 1: Try advanced vector search first
+    const vectorResults = await collection.aggregate([
+      {
+        $vectorSearch: {
+          index: "patterns_vector_search",
+          path: "embedding",
+          queryVector: queryEmbedding,
+          numCandidates: 100,
+          limit: maxPatterns * 2
+        }
+      },
+      {
+        $match: {
+          technology_stack: { $in: techStack },
+          "success_metrics.success_rate": { $gte: successThreshold }
+        }
+      },
+      {
+        $addFields: {
+          relevance_score: {
+            $add: [
+              { $multiply: ["$score", 0.4] }, // Vector similarity weight
+              { $multiply: ["$success_metrics.success_rate", 0.3] }, // Success rate weight
+              { $multiply: ["$success_metrics.usage_count", 0.2] }, // Usage weight
+              { $cond: [{ $in: ["$complexity_level", ["beginner", "intermediate"]] }, 0.1, 0] } // Complexity bonus
+            ]
+          }
+        }
+      },
+      { $sort: { relevance_score: -1 } },
+      { $limit: maxPatterns }
+    ]).toArray();
+
+    if (vectorResults.length > 0) {
+      console.log(`🧠 Vector search found ${vectorResults.length} patterns`);
+      return vectorResults;
+    }
+  } catch (error) {
+    console.log(`⚠️ Vector search not available, falling back to basic search: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  // Phase 2: Fallback to basic search with metadata filtering
   const patterns = await collection.find({
     technology_stack: { $in: techStack },
     "success_metrics.success_rate": { $gte: successThreshold }
@@ -225,53 +266,58 @@ async function searchPatterns(
     ...pattern,
     relevance_score: calculateRelevanceScore(pattern, techStack, queryEmbedding)
   }));
-
-  /* TODO: Advanced vector search implementation for Phase 2:
-  return await collection.aggregate([
-    {
-      $vectorSearch: {
-        index: "patterns_vector_index",
-        path: "embedding",
-        queryVector: queryEmbedding,
-        numCandidates: 100,
-        limit: maxPatterns * 2
-      }
-    },
-    {
-      $match: {
-        technology_stack: { $in: techStack },
-        "success_metrics.success_rate": { $gte: successThreshold }
-      }
-    },
-    {
-      $addFields: {
-        relevance_score: {
-          $add: [
-            { $multiply: ["$score", 0.4] }, // Vector similarity weight
-            { $multiply: ["$success_metrics.success_rate", 0.3] }, // Success rate weight
-            { $multiply: ["$success_metrics.usage_count", 0.2] }, // Usage weight
-            { $cond: [{ $in: ["$complexity_level", ["beginner", "intermediate"]] }, 0.1, 0] } // Complexity bonus
-          ]
-        }
-      }
-    },
-    { $sort: { relevance_score: -1 } },
-    { $limit: maxPatterns }
-  ]).toArray();
-  */
 }
 
 // Advanced rules search
 async function searchRules(
-  queryEmbedding: number[], 
-  techStack: string[], 
+  queryEmbedding: number[],
+  techStack: string[],
   maxRules: number
 ) {
   const { mongoClient } = await initializeClients();
   const db = mongoClient!.db("context_engineering");
   const collection = db.collection("project_rules");
 
-  // Phase 1: Basic search
+  try {
+    // Try vector search first
+    const vectorResults = await collection.aggregate([
+      {
+        $vectorSearch: {
+          index: "rules_vector_search",
+          path: "embedding",
+          queryVector: queryEmbedding,
+          numCandidates: 50,
+          limit: maxRules * 2
+        }
+      },
+      {
+        $match: {
+          technology_stack: { $in: techStack }
+        }
+      },
+      {
+        $addFields: {
+          relevance_score: {
+            $add: [
+              { $multiply: ["$score", 0.5] }, // Vector similarity weight
+              { $cond: [{ $eq: ["$enforcement_level", "mandatory"] }, 0.3, 0] }, // Mandatory bonus
+              { $cond: [{ $eq: ["$enforcement_level", "recommended"] }, 0.2, 0] } // Recommended bonus
+            ]
+          }
+        }
+      },
+      { $sort: { relevance_score: -1 } },
+      { $limit: maxRules }
+    ]).toArray();
+
+    if (vectorResults.length > 0) {
+      return vectorResults;
+    }
+  } catch (error) {
+    console.log(`⚠️ Vector search for rules not available, using basic search`);
+  }
+
+  // Fallback to basic search
   return await collection.find({
     technology_stack: { $in: techStack }
   }, {
@@ -281,11 +327,53 @@ async function searchRules(
 }
 
 // Research knowledge search
-async function searchResearch(techStack: string[]) {
+async function searchResearch(techStack: string[], queryEmbedding?: number[]) {
   const { mongoClient } = await initializeClients();
   const db = mongoClient!.db("context_engineering");
   const collection = db.collection("research_knowledge");
 
+  if (queryEmbedding) {
+    try {
+      // Try vector search first
+      const vectorResults = await collection.aggregate([
+        {
+          $vectorSearch: {
+            index: "research_vector_search",
+            path: "embedding",
+            queryVector: queryEmbedding,
+            numCandidates: 30,
+            limit: 20
+          }
+        },
+        {
+          $match: {
+            technology_stack: { $in: techStack },
+            freshness_score: { $gte: 0.7 }
+          }
+        },
+        {
+          $addFields: {
+            relevance_score: {
+              $add: [
+                { $multiply: ["$score", 0.6] }, // Vector similarity weight
+                { $multiply: ["$freshness_score", 0.4] } // Freshness weight
+              ]
+            }
+          }
+        },
+        { $sort: { relevance_score: -1 } },
+        { $limit: 10 }
+      ]).toArray();
+
+      if (vectorResults.length > 0) {
+        return vectorResults;
+      }
+    } catch (error) {
+      console.log(`⚠️ Vector search for research not available, using basic search`);
+    }
+  }
+
+  // Fallback to basic search
   return await collection.find({
     technology_stack: { $in: techStack },
     freshness_score: { $gte: 0.7 }
@@ -362,16 +450,37 @@ server.registerTool(
   "context-research",
   {
     title: "Context Research",
-    description: `🔍 INTELLIGENT PATTERN RESEARCH - Enhanced from original .claude/commands/generate-prp.md
+    description: `🔍 COMPREHENSIVE RESEARCH ENGINE - Enhanced from original .claude/commands/generate-prp.md
 
-RESEARCH PROCESS (from original line-by-line):
-1. **Codebase Analysis** - Search for similar features/patterns in the codebase, identify files to reference, note existing conventions, check test patterns
-2. **External Research** - Search for similar features/patterns online, library documentation (include specific URLs), implementation examples (GitHub/StackOverflow/blogs), best practices and common pitfalls
-3. **MongoDB Intelligence** - Leverage collaborative knowledge base for proven solutions and success rates
+RESEARCH METHODOLOGY (30+ minute depth from original):
 
-I'll search through MongoDB's collaborative knowledge base to find similar implementations, best practices, and proven solutions. Provide the feature you want to build and I'll discover relevant patterns, rules, and research with confidence scoring.
+**Phase 1: MongoDB Intelligence** (Instant)
+- Search collaborative knowledge base for proven patterns
+- Find similar implementations with success rates
+- Identify relevant rules and best practices
+- Leverage community-validated solutions
 
-USAGE: Call this FIRST before context-assemble-prp to gather comprehensive research data.`,
+**Phase 2: Codebase Analysis** (AI Assistant Required)
+⚠️  IMPORTANT: This tool provides MongoDB research. For complete research matching the original:
+1. Ask AI assistant to search codebase for similar features/patterns
+2. Request identification of files to reference in PRP
+3. Ask for existing conventions and test patterns
+4. Have AI assistant note integration requirements
+
+**Phase 3: External Research** (AI Assistant Required)
+⚠️  IMPORTANT: This tool provides MongoDB research. For complete research matching the original:
+1. Ask AI assistant to search online for similar features/patterns
+2. Request library documentation with specific URLs
+3. Ask for implementation examples (GitHub/StackOverflow/blogs)
+4. Have AI assistant find best practices and common pitfalls
+
+**USAGE PATTERN for Original Research Depth:**
+1. Call context-research (this tool) for MongoDB intelligence
+2. Ask AI assistant: "Search codebase for similar patterns to [feature]"
+3. Ask AI assistant: "Find external documentation and examples for [feature]"
+4. Call context-assemble-prp with all research combined
+
+This tool provides the MongoDB intelligence layer. Combine with AI assistant codebase/web research for full original methodology.`,
     inputSchema: contextResearchSchema,
   },
   async (args) => {
@@ -394,7 +503,7 @@ USAGE: Call this FIRST before context-assemble-prp to gather comprehensive resea
       const rules = await searchRules(queryEmbedding, technology_stack, Math.ceil(max_results / 2));
 
       // Search for research knowledge if requested
-      const research = include_research ? await searchResearch(technology_stack) : [];
+      const research = include_research ? await searchResearch(technology_stack, queryEmbedding) : [];
 
       // If no data found, provide helpful fallback guidance
       if (patterns.length === 0 && rules.length === 0 && research.length === 0) {
@@ -403,6 +512,48 @@ USAGE: Call this FIRST before context-assemble-prp to gather comprehensive resea
 
       // Calculate comprehensive summary
       const summary = calculateSummary(patterns, rules, research);
+
+      // Add research completion guidance for AI assistant
+      const researchGuidance = {
+        mongodb_research_complete: true,
+        next_steps_for_original_depth: [
+          {
+            phase: "Codebase Analysis",
+            action: `Search your codebase for similar features to: "${feature_request}"`,
+            details: [
+              "Look for existing implementations of similar functionality",
+              "Identify files that should be referenced in the PRP",
+              "Note existing conventions and patterns to follow",
+              "Check test patterns for validation approach",
+              "Find integration points and dependencies"
+            ]
+          },
+          {
+            phase: "External Research",
+            action: `Search online for: "${feature_request}" best practices`,
+            details: [
+              "Find library documentation with specific URLs",
+              "Look for implementation examples on GitHub/StackOverflow",
+              "Research best practices and common pitfalls",
+              "Find recent blog posts and tutorials",
+              "Check for version-specific considerations"
+            ]
+          },
+          {
+            phase: "Research Integration",
+            action: "Combine all research sources before calling context-assemble-prp",
+            details: [
+              "Merge MongoDB patterns with codebase findings",
+              "Include external documentation URLs in PRP context",
+              "Note any conflicts between different approaches",
+              "Prioritize proven patterns with high success rates",
+              "Prepare comprehensive context for PRP generation"
+            ]
+          }
+        ],
+        estimated_research_time: "20-30 minutes for original depth",
+        mongodb_intelligence_summary: summary
+      };
 
       return {
         content: [
@@ -413,12 +564,15 @@ USAGE: Call this FIRST before context-assemble-prp to gather comprehensive resea
               rules,
               research,
               summary,
+              research_guidance: researchGuidance,
               metadata: {
                 query_embedding_generated: true,
                 search_timestamp: new Date().toISOString(),
                 tech_stack_used: technology_stack,
                 success_threshold_applied: success_rate_threshold,
-                vector_search_ready: false // Will be true when Atlas Vector Search is configured
+                vector_search_ready: false, // Will be true when Atlas Vector Search is configured
+                research_phase: "mongodb_intelligence_complete",
+                original_methodology_status: "requires_ai_assistant_for_codebase_and_external_research"
               }
             }, null, 2),
           },
@@ -694,7 +848,7 @@ USAGE: Call AFTER context-research to create implementation-ready PRPs with full
   }
 );
 
-// Generate dynamic PRP content
+// Generate dynamic PRP content using sophisticated template structure
 function generateDynamicPRP(
   featureRequest: string,
   template: any,
@@ -703,19 +857,111 @@ function generateDynamicPRP(
 ): string {
   const { selected_patterns, prioritized_rules, relevant_research } = assembledContext;
 
+  // Start with sophisticated PRP template structure (based on 212-line prp_base.md)
   let prp = `# Project Requirements and Patterns (PRP)\n\n`;
-  prp += `## Feature Request\n${featureRequest}\n\n`;
 
-  // Add Universal AI Rules at the beginning
+  prp += `**Template:** Base PRP Template v3 - MongoDB Context Engineering Enhanced\n`;
+  prp += `**Generated:** ${new Date().toISOString()}\n`;
+  prp += `**Confidence Score:** ${template?.compatibility_score || 0.8}/1.0\n\n`;
+
+  // Core Principles (from original template)
+  prp += `## Core Principles\n`;
+  prp += `1. **Context is King**: Include ALL necessary documentation, examples, and caveats\n`;
+  prp += `2. **Validation Loops**: Provide executable tests/lints the AI can run and fix\n`;
+  prp += `3. **Information Dense**: Use keywords and patterns from the codebase\n`;
+  prp += `4. **Progressive Success**: Start simple, validate, then enhance\n`;
+  prp += `5. **Universal AI Rules**: Follow all universal AI assistant guidelines\n\n`;
+  prp += `---\n\n`;
+
+  // Goal section
+  prp += `## Goal\n${featureRequest}\n\n`;
+
+  // Why section (enhanced with pattern insights)
+  prp += `## Why\n`;
+  if (selected_patterns.length > 0) {
+    const avgSuccessRate = selected_patterns.reduce((sum: number, p: any) => sum + (p.success_metrics?.success_rate || 0), 0) / selected_patterns.length;
+    prp += `- **Proven Success**: Based on patterns with ${Math.round(avgSuccessRate * 100)}% average success rate\n`;
+    prp += `- **Community Validated**: Leveraging ${selected_patterns.length} proven implementation patterns\n`;
+  }
+  prp += `- **MongoDB Intelligence**: Enhanced with collaborative learning and pattern recognition\n`;
+  prp += `- **Universal Compatibility**: Works with any AI coding assistant via MCP protocol\n\n`;
+
+  // What section with success criteria
+  prp += `## What\n`;
+  prp += `Implementation of: ${featureRequest}\n\n`;
+  prp += `### Success Criteria\n`;
+  prp += `- [ ] Feature implemented according to proven patterns\n`;
+  prp += `- [ ] All validation loops pass successfully\n`;
+  prp += `- [ ] Code follows universal AI assistant rules\n`;
+  if (validationStrictness === 'strict') {
+    prp += `- [ ] Success rate above 90% (strict validation)\n`;
+    prp += `- [ ] All gotchas addressed with mitigation\n`;
+  } else {
+    prp += `- [ ] Success rate above 70% (standard validation)\n`;
+  }
+  prp += `\n`;
+
+  // Universal AI Rules (critical for any AI assistant)
   prp += `## Universal AI Assistant Rules\n\n`;
   prp += `${loadUniversalRules()}\n\n`;
   prp += `---\n\n`;
 
-  // Add patterns section
+  // All Needed Context section (from original sophisticated template)
+  prp += `## All Needed Context\n\n`;
+
+  // Documentation & References
+  prp += `### Documentation & References\n`;
+  prp += `\`\`\`yaml\n`;
+  prp += `# MUST READ - Include these in your context window\n`;
+
+  if (relevant_research.length > 0) {
+    relevant_research.forEach((research: any) => {
+      if (research.documentation_urls) {
+        research.documentation_urls.forEach((url: string) => {
+          prp += `- url: ${url}\n`;
+          prp += `  why: ${research.summary || 'Key implementation guidance'}\n`;
+        });
+      }
+    });
+  }
+
   if (selected_patterns.length > 0) {
-    prp += `## Implementation Patterns\n\n`;
+    selected_patterns.forEach((pattern: any) => {
+      if (pattern.example_files) {
+        pattern.example_files.forEach((file: string) => {
+          prp += `- file: ${file}\n`;
+          prp += `  why: Pattern to follow, proven ${Math.round((pattern.success_metrics?.success_rate || 0) * 100)}% success rate\n`;
+        });
+      }
+    });
+  }
+
+  prp += `\`\`\`\n\n`;
+
+  // Known Gotchas section (critical from original)
+  prp += `### Known Gotchas & Library Quirks\n`;
+  prp += `\`\`\`python\n`;
+  if (selected_patterns.length > 0) {
+    selected_patterns.forEach((pattern: any) => {
+      if (pattern.gotchas && pattern.gotchas.length > 0) {
+        pattern.gotchas.forEach((gotcha: string) => {
+          prp += `# CRITICAL: ${gotcha}\n`;
+        });
+      }
+    });
+  }
+  prp += `# PATTERN: Follow universal AI assistant rules for consistency\n`;
+  prp += `# GOTCHA: Always validate inputs and handle edge cases\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Implementation Blueprint section (sophisticated structure)
+  prp += `## Implementation Blueprint\n\n`;
+
+  // Add patterns as implementation guidance
+  if (selected_patterns.length > 0) {
+    prp += `### Proven Implementation Patterns\n\n`;
     selected_patterns.forEach((pattern: any, index: number) => {
-      prp += `### Pattern ${index + 1}: ${pattern.pattern_name || 'Unnamed Pattern'}\n`;
+      prp += `#### Pattern ${index + 1}: ${pattern.pattern_name || 'Unnamed Pattern'}\n`;
       prp += `**Success Rate:** ${Math.round((pattern.success_metrics?.success_rate || 0) * 100)}%\n`;
       prp += `**Complexity:** ${pattern.complexity_level || 'Unknown'}\n`;
       prp += `**Description:** ${pattern.description || 'No description available'}\n\n`;
@@ -724,14 +970,6 @@ function generateDynamicPRP(
         prp += `**Implementation Steps:**\n`;
         pattern.implementation_steps.forEach((step: string, stepIndex: number) => {
           prp += `${stepIndex + 1}. ${step}\n`;
-        });
-        prp += `\n`;
-      }
-
-      if (pattern.gotchas && pattern.gotchas.length > 0) {
-        prp += `**⚠️ Gotchas:**\n`;
-        pattern.gotchas.forEach((gotcha: string) => {
-          prp += `- ${gotcha}\n`;
         });
         prp += `\n`;
       }
@@ -767,23 +1005,87 @@ function generateDynamicPRP(
     });
   }
 
-  // Add validation section based on strictness
-  if (validationStrictness !== 'basic') {
-    prp += `## Validation Requirements\n\n`;
-    prp += `**Validation Level:** ${validationStrictness.toUpperCase()}\n\n`;
+  // Validation Loop section (critical from original 212-line template)
+  prp += `## Validation Loop\n\n`;
 
-    if (validationStrictness === 'strict') {
-      prp += `- All mandatory rules must be followed\n`;
-      prp += `- Success rate must be above 90%\n`;
-      prp += `- All gotchas must be addressed\n`;
-      prp += `- Implementation must include error handling\n`;
-    } else {
-      prp += `- Mandatory rules should be followed\n`;
-      prp += `- Success rate should be above 70%\n`;
-      prp += `- Major gotchas should be considered\n`;
-    }
-    prp += `\n`;
+  prp += `### Level 1: Syntax & Style\n`;
+  prp += `\`\`\`bash\n`;
+  prp += `# Run these FIRST - fix any errors before proceeding\n`;
+  prp += `# Adapt these commands to your project's tools:\n`;
+  prp += `npm run lint --fix     # Auto-fix what's possible (JavaScript/TypeScript)\n`;
+  prp += `ruff check --fix       # Auto-fix what's possible (Python)\n`;
+  prp += `npm run type-check     # Type checking (TypeScript)\n`;
+  prp += `mypy src/             # Type checking (Python)\n`;
+  prp += `\n`;
+  prp += `# Expected: No errors. If errors, READ the error and fix.\n`;
+  prp += `\`\`\`\n\n`;
+
+  prp += `### Level 2: Unit Tests\n`;
+  prp += `\`\`\`bash\n`;
+  prp += `# CREATE comprehensive test cases following project patterns:\n`;
+  prp += `# - test_happy_path(): Basic functionality works\n`;
+  prp += `# - test_validation_error(): Invalid input handled gracefully\n`;
+  prp += `# - test_edge_cases(): Boundary conditions covered\n`;
+  prp += `# - test_error_handling(): Failures handled appropriately\n`;
+  prp += `\n`;
+  prp += `# Run and iterate until passing:\n`;
+  prp += `npm test              # JavaScript/TypeScript projects\n`;
+  prp += `pytest tests/ -v      # Python projects\n`;
+  prp += `# If failing: Read error, understand root cause, fix code, re-run\n`;
+  prp += `\`\`\`\n\n`;
+
+  prp += `### Level 3: Integration Test\n`;
+  prp += `\`\`\`bash\n`;
+  prp += `# Test the complete feature in realistic environment\n`;
+  prp += `# Adapt these examples to your specific implementation:\n`;
+  prp += `\n`;
+  prp += `# For web services:\n`;
+  prp += `# curl -X POST http://localhost:3000/api/feature \\\n`;
+  prp += `#   -H "Content-Type: application/json" \\\n`;
+  prp += `#   -d '{"param": "test_value"}'\n`;
+  prp += `\n`;
+  prp += `# For CLI tools:\n`;
+  prp += `# ./your-tool --feature test-input\n`;
+  prp += `\n`;
+  prp += `# Expected: Success response with expected data structure\n`;
+  prp += `# If error: Check logs and debug systematically\n`;
+  prp += `\`\`\`\n\n`;
+
+  // Final validation checklist (from original)
+  prp += `## Final Validation Checklist\n`;
+  prp += `- [ ] All tests pass: Run complete test suite\n`;
+  prp += `- [ ] No linting errors: Code follows style guidelines\n`;
+  prp += `- [ ] No type errors: Type safety maintained\n`;
+  prp += `- [ ] Manual test successful: Feature works as expected\n`;
+  prp += `- [ ] Error cases handled gracefully: No unhandled exceptions\n`;
+  prp += `- [ ] Logs are informative but not verbose: Appropriate logging level\n`;
+  prp += `- [ ] Documentation updated if needed: README, comments, etc.\n`;
+  if (validationStrictness === 'strict') {
+    prp += `- [ ] Success rate above 90%: Strict validation requirements met\n`;
+    prp += `- [ ] All gotchas addressed: Known issues mitigated\n`;
   }
+  prp += `\n`;
+
+  // Anti-patterns section (from original)
+  prp += `## Anti-Patterns to Avoid\n`;
+  prp += `- ❌ Don't create new patterns when existing ones work\n`;
+  prp += `- ❌ Don't skip validation because "it should work"\n`;
+  prp += `- ❌ Don't ignore failing tests - fix them\n`;
+  prp += `- ❌ Don't hardcode values that should be configurable\n`;
+  prp += `- ❌ Don't catch all exceptions - be specific\n`;
+  prp += `- ❌ Don't ignore universal AI assistant rules\n\n`;
+
+  // MongoDB Context Engineering enhancement
+  prp += `---\n\n`;
+  prp += `## MongoDB Context Engineering Enhancement\n`;
+  prp += `This PRP was generated using MongoDB Context Engineering Platform with:\n`;
+  prp += `- **${selected_patterns.length} proven implementation patterns** with average ${Math.round((selected_patterns.reduce((sum: number, p: any) => sum + (p.success_metrics?.success_rate || 0), 0) / Math.max(selected_patterns.length, 1)) * 100)}% success rate\n`;
+  prp += `- **${prioritized_rules.length} project rules** for consistency\n`;
+  prp += `- **${relevant_research.length} research sources** for best practices\n`;
+  prp += `- **Universal AI compatibility** via MCP protocol\n`;
+  prp += `- **Collaborative learning** from community patterns\n\n`;
+
+  prp += `🚀 **This represents the evolution from static context to dynamic, intelligent, collaborative intelligence!**\n`;
 
   return prp;
 }

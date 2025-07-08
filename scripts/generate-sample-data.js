@@ -340,6 +340,84 @@ const SAMPLE_RESEARCH = [
 ];
 
 /**
+ * Sample project rules
+ */
+const SAMPLE_RULES = [
+    {
+        rule_id: "universal_ai_001",
+        rule_type: "coding_standard",
+        title: "Universal AI Assistant Compatibility",
+        description: "All code must work with any AI coding assistant, not just Claude",
+        rule_text: "Use universal patterns and avoid AI-specific references in code comments or documentation",
+        enforcement_level: "mandatory",
+        technology_stack: ["python", "javascript", "typescript", "universal"],
+        priority: 1,
+        rationale: "Ensures maximum compatibility across AI assistants and prevents vendor lock-in",
+        examples: [
+            "✅ Good: # AI assistant will implement this function",
+            "❌ Bad: # Claude will implement this function"
+        ],
+        violations_to_avoid: [
+            "AI-specific naming in code",
+            "Assistant-specific assumptions in logic",
+            "Platform-dependent implementations"
+        ],
+        success_metrics: {
+            compliance_rate: 0.98,
+            adoption_count: 245
+        }
+    },
+    {
+        rule_id: "fastapi_validation_001",
+        rule_type: "validation",
+        title: "FastAPI Input Validation",
+        description: "All FastAPI endpoints must use Pydantic models for request validation",
+        rule_text: "Every POST/PUT endpoint must define a Pydantic model for input validation with proper error handling",
+        enforcement_level: "mandatory",
+        technology_stack: ["python", "fastapi", "pydantic"],
+        priority: 2,
+        rationale: "Prevents runtime errors and provides automatic API documentation",
+        examples: [
+            "✅ Good: @app.post('/items/', response_model=ItemResponse)\\nasync def create_item(item: ItemCreate):",
+            "❌ Bad: @app.post('/items/')\\nasync def create_item(data: dict):"
+        ],
+        violations_to_avoid: [
+            "Using dict for request bodies",
+            "Missing response models",
+            "No input validation"
+        ],
+        success_metrics: {
+            compliance_rate: 0.95,
+            adoption_count: 189
+        }
+    },
+    {
+        rule_id: "error_handling_001",
+        rule_type: "error_handling",
+        title: "Comprehensive Error Handling",
+        description: "All functions must handle errors gracefully with informative messages",
+        rule_text: "Use try-catch blocks with specific error types and user-friendly error messages",
+        enforcement_level: "recommended",
+        technology_stack: ["python", "javascript", "typescript", "universal"],
+        priority: 3,
+        rationale: "Improves user experience and debugging capabilities",
+        examples: [
+            "✅ Good: try:\\n    result = risky_operation()\\nexcept SpecificError as e:\\n    logger.error(f'Operation failed: {e}')\\n    return {'error': 'User-friendly message'}",
+            "❌ Bad: result = risky_operation()  # No error handling"
+        ],
+        violations_to_avoid: [
+            "Bare except clauses",
+            "Silent failures",
+            "Generic error messages"
+        ],
+        success_metrics: {
+            compliance_rate: 0.87,
+            adoption_count: 156
+        }
+    }
+];
+
+/**
  * Generate sample data
  */
 async function generateSampleData() {
@@ -441,6 +519,22 @@ async function generateSampleData() {
         // Use upsert to handle duplicates gracefully
         const researchResult = await upsertSampleData(researchCollection, SAMPLE_RESEARCH, 'knowledge_id');
         console.log(`   ✅ Generated ${researchResult.insertedCount} new research entries, ${researchResult.existingCount} already existed`);
+
+        // Generate project rules
+        console.log('\n📏 Generating project rules...');
+        const rulesCollection = db.collection('project_rules');
+
+        for (const rule of SAMPLE_RULES) {
+            console.log(`   🔮 Generating embedding for: ${rule.title}`);
+            rule.embedding = await generateEmbedding(`${rule.title}\n${rule.description}\n${rule.rule_text}`);
+            rule.created_at = new Date();
+            rule.updated_at = new Date();
+            rule.last_reviewed = new Date();
+        }
+
+        // Use upsert to handle duplicates gracefully
+        const rulesResult = await upsertSampleData(rulesCollection, SAMPLE_RULES, 'rule_id');
+        console.log(`   ✅ Generated ${rulesResult.insertedCount} new rules, ${rulesResult.existingCount} already existed`);
 
         // Generate PRP templates (Original context engineering templates)
         console.log('\n📋 Generating PRP templates...');

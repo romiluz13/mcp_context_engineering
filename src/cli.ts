@@ -65,6 +65,15 @@ COMMANDS:
 
   (no command)             Start the MCP server for AI assistant integration
 
+🚀 RECOMMENDED WORKFLOW (MongoDB Context Engineering):
+  1. Configure MCP in your AI assistant (see examples/mcp-configs/)
+  2. Ask AI: "Help me research patterns for [your feature]"
+  3. AI calls: context-research (MongoDB intelligence)
+  4. AI calls: context-assemble-prp (sophisticated PRP generation)
+  5. Follow the generated PRP with validation loops
+
+💡 This approach provides superior intelligence vs traditional context engineering!
+
 EXAMPLES:
   mcp-context-engineering setup-database
   mcp-context-engineering generate-sample-data
