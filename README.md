@@ -32,9 +32,12 @@
 
 ## 🚀 Bulletproof Installation
 
-### 🎯 One-Line Install (ZERO-ERROR GUARANTEED!)
+### 🎯 Interactive Install (RECOMMENDED - ZERO-ERROR GUARANTEED!)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh | bash
+# Download and run interactively for best experience
+wget https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh
+chmod +x install.sh
+./install.sh
 ```
 
 **🚨 BULLETPROOF INSTALLATION FEATURES:**
@@ -44,6 +47,12 @@ curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/m
 - 🧹 **Auto-cleanup** - removes any corrupted environment variables
 - ✅ **Perfect shell integration** - works with zsh, bash, and fish
 - 🎉 **Interactive credential collection** - just paste when prompted!
+
+### Alternative: One-Line Install (Non-Interactive)
+```bash
+curl -fsSL https://raw.githubusercontent.com/romiluz13/mcp_context_engineering/main/install.sh | bash
+```
+**Note:** This will install the package but require manual environment variable setup.
 
 ### Option 2: Manual Install
 ```bash
