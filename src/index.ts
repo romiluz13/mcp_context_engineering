@@ -236,7 +236,16 @@ const contextResearchSchema = {
 
 server.tool(
   "context-research",
-  "🔍 Research and discover implementation patterns for any feature or technology. I'll search through MongoDB's collaborative knowledge base to find similar implementations, best practices, and proven solutions. Just tell me what you want to build and I'll find relevant patterns and examples.",
+  `🔍 INTELLIGENT PATTERN RESEARCH - Enhanced from original .claude/commands/generate-prp.md
+
+RESEARCH PROCESS (from original line-by-line):
+1. **Codebase Analysis** - Search for similar features/patterns in the codebase, identify files to reference, note existing conventions, check test patterns
+2. **External Research** - Search for similar features/patterns online, library documentation (include specific URLs), implementation examples (GitHub/StackOverflow/blogs), best practices and common pitfalls
+3. **MongoDB Intelligence** - Leverage collaborative knowledge base for proven solutions and success rates
+
+I'll search through MongoDB's collaborative knowledge base to find similar implementations, best practices, and proven solutions. Provide the feature you want to build and I'll discover relevant patterns, rules, and research with confidence scoring.
+
+USAGE: Call this FIRST before context-assemble-prp to gather comprehensive research data.`,
   contextResearchSchema,
   async (args) => {
     try {
@@ -446,7 +455,23 @@ const contextAssemblePRPSchema = {
 
 server.tool(
   "context-assemble-prp",
-  "📋 Create a comprehensive implementation plan (PRP) for any feature. I'll research similar implementations, gather best practices, and create a detailed step-by-step plan with validation checkpoints. Just describe what you want to build and I'll create a complete blueprint for implementation.",
+  `📋 COMPREHENSIVE PRP GENERATION - Enhanced from original .claude/commands/generate-prp.md + PRPs/templates/prp_base.md
+
+ORIGINAL WORKFLOW ENHANCED (212 lines of template intelligence):
+- Uses research findings to create context-rich implementation plans
+- Includes ALL necessary documentation, examples, and caveats
+- Provides executable tests/validation loops for iterative refinement
+- Follows "Context is King" principle with progressive success approach
+- Incorporates MongoDB collaborative intelligence for proven patterns
+
+PRP GENERATION PROCESS (from original):
+1. **Load Research** - Use context-research results for comprehensive context
+2. **Template Selection** - Choose optimal template based on complexity and preferences
+3. **Context Assembly** - Include all documentation, examples, gotchas, and validation loops
+4. **Validation Design** - Create executable tests and refinement checkpoints
+5. **MongoDB Enhancement** - Add collaborative learning and success metrics
+
+USAGE: Call AFTER context-research to create implementation-ready PRPs with full context.`,
   contextAssemblePRPSchema,
   async (args) => {
     try {
