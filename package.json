@@ -1,7 +1,7 @@
 {
   "name": "mcp-context-engineering",
   "description": "🚀 Revolutionary AI Context Engineering Platform via MCP Protocol - Transform static context into dynamic, intelligent, collaborative intelligence for any AI assistant",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "type": "module",
   "main": "dist/index.js",
   "author": "Rom Iluz <rom@iluz.net>",
