@@ -260,6 +260,11 @@ server.tool(
       // Search for research knowledge if requested
       const research = include_research ? await searchResearch(technology_stack) : [];
 
+      // If no data found, provide helpful fallback guidance
+      if (patterns.length === 0 && rules.length === 0 && research.length === 0) {
+        console.log("ℹ️  No patterns found in database. Consider running: mcp-context-engineering generate-sample-data");
+      }
+
       // Calculate comprehensive summary
       const summary = calculateSummary(patterns, rules, research);
 
@@ -337,8 +342,8 @@ function calculateTemplateCompatibility(template: any, researchSummary: any): nu
   score += usageScore * 0.2;
 
   // Complexity match with research
-  const avgComplexity = researchSummary.complexity_distribution;
-  if (avgComplexity && template.complexity_level) {
+  const avgComplexity = researchSummary.complexity_distribution || {};
+  if (avgComplexity && template.complexity_level && researchSummary.total_patterns > 0) {
     const complexityMatch = avgComplexity[template.complexity_level] || 0;
     score += (complexityMatch / researchSummary.total_patterns) * 0.3;
   }
@@ -457,10 +462,25 @@ server.tool(
       const queryEmbedding = await generateEmbedding(feature_request);
 
       // Find optimal template using advanced scoring
+      // Handle both direct research results and nested summary structure
+      const researchSummary = research_results.summary || {
+        total_patterns: (research_results.patterns || []).length,
+        total_rules: (research_results.rules || []).length,
+        total_research_sources: (research_results.research || []).length,
+        complexity_distribution: {},
+        avg_success_rate: 0,
+        avg_relevance_score: 0,
+        confidence_indicators: {
+          high_success_patterns: 0,
+          mandatory_rules: 0,
+          fresh_research: 0
+        }
+      };
+
       const optimalTemplate = await findOptimalTemplate(
         queryEmbedding,
         template_preferences,
-        research_results.summary
+        researchSummary
       );
 
       // Assemble context using sophisticated algorithms
