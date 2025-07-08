@@ -58,13 +58,19 @@ USAGE:
 COMMANDS:
   setup-database           Interactive database setup with Vector Search indexes
   generate-sample-data     Generate sample data with AI embeddings
+  generate-prp             Generate comprehensive PRP from feature description
+  execute-prp              Execute PRP implementation with validation loops
+  create-feature           Create initial feature request template
   help                     Show this help message
-  
+
   (no command)             Start the MCP server for AI assistant integration
 
 EXAMPLES:
   mcp-context-engineering setup-database
   mcp-context-engineering generate-sample-data
+  mcp-context-engineering create-feature "multi-agent system"
+  mcp-context-engineering generate-prp feature-request.md
+  mcp-context-engineering execute-prp PRPs/feature-name.md
   mcp-context-engineering
 
 ENVIRONMENT VARIABLES:
@@ -88,6 +94,21 @@ switch (command) {
     case 'generate-sample-data':
         console.log('🎲 Starting sample data generation...\n');
         executeScript(join(__dirname, '..', 'scripts', 'generate-sample-data.js'), args.slice(1));
+        break;
+
+    case 'generate-prp':
+        console.log('🧠 Generating MongoDB-powered PRP with context intelligence...\n');
+        executeScript(join(__dirname, '..', 'scripts', 'generate-prp.js'), args.slice(1));
+        break;
+
+    case 'execute-prp':
+        console.log('⚡ Executing PRP with validation loops and learning...\n');
+        executeScript(join(__dirname, '..', 'scripts', 'execute-prp.js'), args.slice(1));
+        break;
+
+    case 'create-feature':
+        console.log('✨ Creating feature request template...\n');
+        executeScript(join(__dirname, '..', 'scripts', 'create-feature.js'), args.slice(1));
         break;
 
     case 'help':

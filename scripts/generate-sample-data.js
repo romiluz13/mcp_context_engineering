@@ -365,7 +365,178 @@ async function generateSampleData() {
         await researchCollection.deleteMany({ knowledge_id: { $in: SAMPLE_RESEARCH.map(r => r.knowledge_id) } });
         const researchResult = await researchCollection.insertMany(SAMPLE_RESEARCH);
         console.log(`   ✅ Generated ${researchResult.insertedCount} research knowledge entries`);
-        
+
+        // Generate PRP templates (Original context engineering templates)
+        console.log('\n📋 Generating PRP templates...');
+        const templatesCollection = db.collection('prp_templates');
+
+        const originalPRPTemplate = {
+            template_name: "Universal PRP Template v3",
+            description: "Original context engineering template enhanced with MongoDB intelligence",
+            template_content: `## Purpose
+MongoDB-powered template optimized for AI agents to implement features with comprehensive context intelligence, self-validation capabilities, and collaborative learning from the context engineering platform.
+
+## Core Principles
+1. **Context is King**: Include ALL necessary documentation, examples, and caveats
+2. **Validation Loops**: Provide executable tests/lints the AI can run and fix
+3. **Information Dense**: Use keywords and patterns from the MongoDB knowledge base
+4. **Progressive Success**: Start simple, validate, then enhance
+5. **Universal AI Rules**: Follow all rules in UNIVERSAL_AI_RULES.md
+6. **MongoDB Intelligence**: Leverage collaborative learning and pattern discovery
+
+---
+
+## Goal
+[What needs to be built - clear, specific, actionable]
+
+## Why
+[Business value and user impact]
+[Integration with existing features]
+[Problems this solves and for whom]
+
+## What
+[User-visible behavior and technical requirements]
+
+### Success Criteria
+- [ ] [Specific measurable outcomes]
+- [ ] [Quality gates that must pass]
+- [ ] [Performance requirements]
+
+## All Needed Context
+
+### Documentation & References
+\`\`\`yaml
+# MUST READ - Critical documentation
+- url: [specific documentation URL]
+  why: [what specific information is needed]
+
+- url: [API reference URL]
+  why: [what methods/patterns to use]
+\`\`\`
+
+### Current Codebase Analysis
+\`\`\`bash
+# Run tree command to get project structure
+tree -I 'node_modules|dist|.git' -L 3
+\`\`\`
+
+### MongoDB Intelligence Insights
+\`\`\`yaml
+SIMILAR_PATTERNS_FOUND: [number]
+RESEARCH_KNOWLEDGE_AVAILABLE: [number]
+CONFIDENCE_SCORE: [score]/10
+
+RECOMMENDED_APPROACH:
+[MongoDB-enhanced development patterns]
+\`\`\`
+
+## Implementation Blueprint
+
+### Data Models and Structure
+\`\`\`typescript
+// Enhanced with MongoDB pattern insights
+interface FeatureConfig {
+    // Define core data structures
+    // Ensure type safety and consistency
+}
+\`\`\`
+
+### Implementation Tasks (MongoDB-Optimized)
+\`\`\`yaml
+Task 1: Setup and Configuration
+  - Review MongoDB pattern insights
+  - Set up development environment
+  - Configure necessary dependencies
+
+Task 2: Core Implementation
+  - Implement main feature logic
+  - Follow discovered patterns
+  - Apply MongoDB intelligence recommendations
+
+Task 3: Testing and Validation
+  - Create comprehensive test suite
+  - Implement validation loops
+  - Ensure quality gates pass
+
+Task 4: Integration and Documentation
+  - Integrate with existing systems
+  - Update documentation
+  - Store implementation outcome in MongoDB for learning
+\`\`\`
+
+## Validation Loop (Enhanced from Original)
+
+### Level 1: Syntax & Style
+\`\`\`bash
+# Universal validation commands
+npm run lint        # or appropriate linter
+npm run type-check  # or appropriate type checker
+npm run format      # or appropriate formatter
+
+# Expected: No errors. If errors, READ and fix.
+\`\`\`
+
+### Level 2: Unit Tests
+\`\`\`bash
+# Run comprehensive test suite
+npm test           # or appropriate test command
+npm run test:coverage  # ensure adequate coverage
+
+# If failing: Read error, understand root cause, fix code, re-run
+\`\`\`
+
+### Level 3: Integration Test
+\`\`\`bash
+# Test the complete feature
+npm run test:integration
+
+# Manual verification
+# [Add specific commands for this feature]
+\`\`\`
+
+## Final Validation Checklist
+- [ ] All tests pass
+- [ ] No linting errors
+- [ ] No type errors
+- [ ] Manual test successful
+- [ ] Error cases handled gracefully
+- [ ] Documentation updated
+- [ ] Implementation outcome stored in MongoDB for learning
+
+## MongoDB Learning Integration
+- [ ] Store implementation success/failure in implementation_outcomes collection
+- [ ] Update pattern success metrics based on outcome
+- [ ] Contribute learnings back to collaborative knowledge base
+
+---
+
+## Anti-Patterns to Avoid (MongoDB-Enhanced)
+- ❌ Don't ignore MongoDB pattern recommendations
+- ❌ Don't skip validation loops
+- ❌ Don't forget to contribute learnings back
+- ❌ Don't ignore existing patterns
+- ❌ Don't forget error handling
+- ❌ Don't skip documentation updates
+
+## Confidence Score: [calculated]/10
+
+Generated: [timestamp]
+MongoDB Context Engineering Platform v1.0.1`,
+            success_metrics: { avg_success_rate: 0.89, usage_count: 156 },
+            feature_types: ["general", "backend", "frontend"],
+            complexity_level: "intermediate",
+            original_source: "PRPs/templates/prp_base.md (212 lines)",
+            created_at: new Date(),
+            updated_at: new Date()
+        };
+
+        console.log(`   🔮 Generating embedding for: ${originalPRPTemplate.template_name}`);
+        originalPRPTemplate.embedding = await generateEmbedding(`${originalPRPTemplate.template_name}\n${originalPRPTemplate.description}\nPRP template validation loops MongoDB intelligence`);
+
+        await templatesCollection.deleteMany({ template_name: "Universal PRP Template v3" });
+        const templateResult = await templatesCollection.insertOne(originalPRPTemplate);
+        console.log(`   ✅ Generated original PRP template with MongoDB enhancements`);
+
         console.log('\n🎉 Sample data generation complete!');
         console.log('📊 Ready for testing context engineering tools');
         
