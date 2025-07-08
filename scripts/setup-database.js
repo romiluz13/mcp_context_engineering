@@ -451,9 +451,8 @@ async function setupDatabase() {
     let openaiApiKey = process.env.OPENAI_API_KEY || process.env.MDB_MCP_OPENAI_API_KEY;
 
     if (openaiApiKey) {
-        const maskedKey = openaiApiKey.substring(0, 7) + '...' + openaiApiKey.substring(openaiApiKey.length - 4);
-        printSuccess(`Found existing OpenAI API key: ${maskedKey}`);
-        const useExisting = await askYesNo('Use this API key?');
+        printSuccess(`Found existing OpenAI API key in environment`);
+        const useExisting = await askYesNo('Use existing API key from environment?');
         if (!useExisting) {
             openaiApiKey = null;
         }

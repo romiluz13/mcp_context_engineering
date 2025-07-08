@@ -56,8 +56,8 @@ USAGE:
   mcp-context-engineering [command] [options]
 
 COMMANDS:
-  setup-database           Interactive database setup with Vector Search indexes
-  generate-sample-data     Generate sample data with AI embeddings
+  setup-database           Non-interactive database setup (use --interactive for guided setup)
+  generate-sample-data     Initialize with REAL Context Engineering templates (use --legacy for old fake data)
   generate-prp             Generate comprehensive PRP from feature description
   execute-prp              Execute PRP implementation with validation loops
   create-feature           Create initial feature request template
@@ -96,13 +96,25 @@ DOCUMENTATION:
 // Handle commands
 switch (command) {
     case 'setup-database':
-        console.log('🚀 Starting interactive database setup...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'setup-database.js'), args.slice(1));
+        // Check if --interactive flag is provided
+        if (args.includes('--interactive')) {
+            console.log('🚀 Starting interactive database setup...\n');
+            executeScript(join(__dirname, '..', 'scripts', 'setup-database.js'), args.slice(1));
+        } else {
+            console.log('🚀 Starting simple database setup (non-interactive)...\n');
+            executeScript(join(__dirname, '..', 'scripts', 'simple-setup.js'), args.slice(1));
+        }
         break;
 
     case 'generate-sample-data':
-        console.log('🎲 Starting sample data generation...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'generate-sample-data.js'), args.slice(1));
+        // Check if --legacy flag is provided for old fake data
+        if (args.includes('--legacy')) {
+            console.log('🎲 Starting legacy sample data generation...\n');
+            executeScript(join(__dirname, '..', 'scripts', 'generate-sample-data.js'), args.slice(1));
+        } else {
+            console.log('📚 Initializing with REAL Context Engineering templates...\n');
+            executeScript(join(__dirname, '..', 'scripts', 'initialize-real-data.js'), args.slice(1));
+        }
         break;
 
     case 'generate-prp':
@@ -124,6 +136,12 @@ switch (command) {
     case '--help':
     case '-h':
         showHelp();
+        break;
+
+    case 'version':
+    case '--version':
+    case '-v':
+        console.log('2.2.0');
         break;
 
     case undefined:
