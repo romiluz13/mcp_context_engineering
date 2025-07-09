@@ -54,6 +54,47 @@ function loadUniversalRules(): string {
   }
 }
 
+// Project Constitution System - Critical Missing Feature from Reference
+let projectConstitution: string | null = null;
+
+function loadProjectConstitution(): string | null {
+  try {
+    // Look for project-specific rules files in order of preference
+    const possibleFiles = [
+      '.cursorrules',      // Cursor AI standard
+      'mcp_rules.md',      // MCP Context Engineering standard
+      'CLAUDE.md',         // Original Context Engineering reference
+      '.ai-rules',         // Alternative naming
+      'project-rules.md'   // Generic alternative
+    ];
+
+    const currentDir = process.cwd();
+
+    for (const filename of possibleFiles) {
+      const filePath = join(currentDir, filename);
+      try {
+        if (existsSync(filePath)) {
+          const content = readFileSync(filePath, 'utf8');
+          console.error(`📋 Loaded project constitution from: ${filename}`);
+          return content;
+        }
+      } catch (error) {
+        // Continue to next file
+        continue;
+      }
+    }
+
+    console.error('ℹ️ No project constitution found. Looked for:', possibleFiles.join(', '));
+    return null;
+  } catch (error) {
+    console.warn('Could not load project constitution:', error);
+    return null;
+  }
+}
+
+// Initialize project constitution on startup
+projectConstitution = loadProjectConstitution();
+
 // Register MCP Resources
 server.registerResource(
   "universal-ai-rules",
@@ -83,7 +124,7 @@ server.registerResource(
     contents: [{
       uri: uri.href,
       text: JSON.stringify({
-        platform: "MongoDB Context Engineering with Memory Banks",
+        platform: "MongoDB Context Engineering with Personal Pattern Library",
         version: "2.3.0",
         capabilities: [
           "context-research",
@@ -503,7 +544,7 @@ server.registerTool(
   "context-research",
   {
     title: "Context Research",
-    description: "Search MongoDB patterns and collaborative intelligence for feature implementation research",
+    description: "Search MongoDB patterns and personal pattern library for feature implementation research",
     inputSchema: contextResearchSchema,
   },
   async (args) => {
@@ -629,9 +670,20 @@ server.registerTool(
         methodology_comparison: {
           original_claude_commands: "30+ minutes manual research + ULTRATHINK",
           mcp_enhanced_version: "Instant MongoDB intelligence + AI-guided research + ULTRATHINK",
-          advantage: "Faster startup with collaborative learning + preserved planning depth"
+          advantage: "Faster startup with personal pattern library + preserved planning depth"
         },
-        mongodb_intelligence_summary: summary
+        mongodb_intelligence_summary: summary,
+        // PROJECT CONSTITUTION - CRITICAL MISSING FEATURE FROM REFERENCE
+        project_constitution: projectConstitution ? {
+          source: "Project-specific rules loaded from local file",
+          rules: projectConstitution,
+          enforcement: "MANDATORY - These rules must be followed for ALL implementations in this project",
+          integration_requirement: "Include these rules in context-assemble-prp call for proper PRP generation"
+        } : {
+          source: "No project constitution found",
+          recommendation: "Create .cursorrules, mcp_rules.md, or CLAUDE.md file for project-specific rules",
+          fallback: "Using universal AI rules only"
+        }
       };
 
       return {
@@ -818,7 +870,7 @@ server.registerTool(
   "context-assemble-prp",
   {
     title: "Context Assemble PRP",
-    description: "Generate comprehensive Project Requirements and Patterns (PRP) with validation loops and collaborative intelligence",
+    description: "Generate comprehensive Project Requirements and Patterns (PRP) with validation loops and personal pattern intelligence",
     inputSchema: contextAssemblePRPSchema,
   },
   async (args) => {
@@ -1210,6 +1262,23 @@ function generateDynamicPRP(
   prp += `3. **Information Dense**: Use keywords and patterns from the codebase\n`;
   prp += `4. **Progressive Success**: Start simple, validate, then enhance\n`;
   prp += `5. **Universal AI Rules**: Follow all universal AI assistant guidelines\n\n`;
+
+  // PROJECT CONSTITUTION - CRITICAL MISSING FEATURE FROM REFERENCE
+  if (projectConstitution) {
+    prp += `## 📋 Project Constitution (MANDATORY)\n\n`;
+    prp += `**CRITICAL**: These project-specific rules MUST be followed for all implementations:\n\n`;
+    prp += `\`\`\`\n${projectConstitution}\n\`\`\`\n\n`;
+    prp += `**Enforcement**: All code, tests, and documentation must comply with these rules.\n`;
+    prp += `**Validation**: Include constitution compliance in all validation loops.\n\n`;
+  } else {
+    prp += `## ⚠️ No Project Constitution Found\n\n`;
+    prp += `**Recommendation**: Create a \`.cursorrules\`, \`mcp_rules.md\`, or \`CLAUDE.md\` file in project root for:\n`;
+    prp += `- File length limits (e.g., 500 lines max)\n`;
+    prp += `- Testing standards and requirements\n`;
+    prp += `- Code style and architecture patterns\n`;
+    prp += `- Project-specific constraints and conventions\n\n`;
+  }
+
   prp += `---\n\n`;
 
   // Goal section
@@ -1220,9 +1289,9 @@ function generateDynamicPRP(
   if (selected_patterns.length > 0) {
     const avgSuccessRate = selected_patterns.reduce((sum: number, p: any) => sum + (p.success_metrics?.success_rate || 0), 0) / selected_patterns.length;
     prp += `- **Proven Success**: Based on patterns with ${Math.round(avgSuccessRate * 100)}% average success rate\n`;
-    prp += `- **Community Validated**: Leveraging ${selected_patterns.length} proven implementation patterns\n`;
+    prp += `- **Personal Library**: Leveraging ${selected_patterns.length} proven patterns from your implementation history\n`;
   }
-  prp += `- **MongoDB Intelligence**: Enhanced with collaborative learning and pattern recognition\n`;
+  prp += `- **MongoDB Intelligence**: Enhanced with personal pattern library and success tracking\n`;
   prp += `- **Universal Compatibility**: Works with any AI coding assistant via MCP protocol\n\n`;
 
   // What section with success criteria
@@ -3135,11 +3204,11 @@ server.registerTool(
   "memory-bank-sync",
   {
     title: "Memory Bank Sync",
-    description: `🔄 **SYNC WITH COLLABORATIVE INTELLIGENCE**
+    description: `🔄 **SYNC WITH PERSONAL PATTERN LIBRARY**
 
-**BIDIRECTIONAL SYNC WITH MONGODB COLLABORATIVE INTELLIGENCE!**
+**BIDIRECTIONAL SYNC WITH MONGODB PERSONAL INTELLIGENCE!**
 
-Syncs local memory bank with MongoDB patterns and community intelligence. This is where individual Context Engineering becomes collaborative learning.
+Syncs local memory bank with MongoDB patterns and your personal pattern library. This is where individual Context Engineering becomes persistent learning across projects.
 
 **SYNC CAPABILITIES:**
 - 📥 **Pull:** Get latest community patterns and templates
@@ -3564,7 +3633,7 @@ async function main() {
     console.error("🔍 Context Tools: context-research, context-assemble-prp");
     console.error("🧠 Memory Bank Tools: memory-bank-initialize, memory-bank-read, memory-bank-update, memory-bank-sync");
     console.error("⚡ Real-time features: Event triggers, file watching, MongoDB sync");
-    console.error("🌐 Collaborative intelligence: Community patterns and templates");
+    console.error("🌐 Personal Pattern Library: Your implementation patterns and templates");
   }
 }
 

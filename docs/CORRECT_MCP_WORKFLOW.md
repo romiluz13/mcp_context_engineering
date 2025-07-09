@@ -124,20 +124,28 @@ Great! I've created a comprehensive PRP (Project Requirements and Patterns) docu
 ## 📋 What Each Component Does
 
 ### MCP Tools (Called by AI)
-1. **context-research**: Searches MongoDB for patterns and knowledge
-2. **context-assemble-prp**: Generates comprehensive implementation plans
+1. **context-research**: Searches MongoDB for YOUR personal patterns and provides research methodology
+2. **context-assemble-prp**: Generates comprehensive implementation plans with project constitution
+3. **memory-bank-***: Manages persistent context across sessions
 
 ### CLI Commands (For Setup/Maintenance)
 1. **setup-database**: Creates MongoDB collections and indexes
 2. **generate-sample-data**: Populates initial patterns and knowledge
 3. **create-feature**: Helper to create feature request files
 
-### What the AI Does
-1. Calls MCP tools for MongoDB intelligence
-2. Searches YOUR codebase for patterns
-3. Searches the web for documentation
-4. Implements the actual code
-5. Runs tests and fixes issues
+### What the AI Does (30+ Minute Research Methodology)
+1. **Calls MCP tools** for personal pattern intelligence and research guidance
+2. **Searches YOUR codebase** for existing patterns and implementations
+3. **Searches the web** for documentation, examples, and best practices
+4. **Performs ULTRATHINK** phase for comprehensive planning
+5. **Implements the actual code** following generated PRP
+6. **Runs validation loops** and fixes issues iteratively
+7. **Updates memory bank** with successful patterns for future use
+
+### Project Constitution (NEW!)
+- **Reads project rules** from `.cursorrules`, `mcp_rules.md`, or `CLAUDE.md`
+- **Enforces constraints** like file length limits, testing standards
+- **Ensures consistency** across all implementations in the project
 
 ## 🚨 Common Mistakes to Avoid
 
@@ -155,6 +163,11 @@ Great! I've created a comprehensive PRP (Project Requirements and Patterns) docu
 
 ## 🎉 The Magic of MCP
 
-The beauty of MCP (Model Context Protocol) is that it makes the MongoDB Context Engineering intelligence available to ANY AI assistant, not just Claude Desktop. The AI assistant brings its own capabilities (code search, web search, implementation) and combines them with the MongoDB intelligence layer.
+The beauty of MCP (Model Context Protocol) is that it makes the MongoDB Context Engineering intelligence available to ANY AI assistant, not just Claude Desktop.
 
-This is why the CLI scripts can't work standalone - they're missing the AI's capabilities! 
+**ROLE CLARITY:**
+- **MCP Server**: Stores/retrieves your personal patterns in MongoDB, provides research methodology, enforces project constitution
+- **AI Assistant**: Does the actual 30+ minute research, codebase analysis, web search, ULTRATHINK, implementation, and testing
+- **Result**: Original Context Engineering methodology enhanced with persistent memory and personal pattern learning
+
+This is why the CLI scripts can't work standalone - they're missing the AI's research and implementation capabilities!
