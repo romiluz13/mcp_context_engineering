@@ -18,6 +18,14 @@ AI coding assistant with persistent memory and collaborative intelligence.
 npm install -g mcp-context-engineering
 ```
 
+## Setup
+
+Run the one-time setup to create your MongoDB collections:
+
+```bash
+npx mcp-context-engineering mcp-setup
+```
+
 ## Configuration
 
 Add to your MCP config file:

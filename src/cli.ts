@@ -56,11 +56,7 @@ USAGE:
   mcp-context-engineering [command] [options]
 
 COMMANDS:
-  setup-database           Non-interactive database setup (use --interactive for guided setup)
-  generate-sample-data     Initialize with REAL Context Engineering templates (use --legacy for old fake data)
-  generate-prp             Generate comprehensive PRP from feature description
-  execute-prp              Execute PRP implementation with validation loops
-  create-feature           Create initial feature request template
+  mcp-setup                Revolutionary one-time setup (creates MongoDB collections)
   help                     Show this help message
 
   (no command)             Start the MCP server for AI assistant integration
@@ -75,9 +71,8 @@ COMMANDS:
 💡 This approach provides superior intelligence vs traditional context engineering!
 
 EXAMPLES:
-  mcp-context-engineering setup-database
-  mcp-context-engineering generate-sample-data
-  mcp-context-engineering create-feature "multi-agent system"
+  mcp-context-engineering mcp-setup
+  mcp-context-engineering
   mcp-context-engineering generate-prp feature-request.md
   mcp-context-engineering execute-prp PRPs/feature-name.md
   mcp-context-engineering
@@ -95,41 +90,9 @@ DOCUMENTATION:
 
 // Handle commands
 switch (command) {
-    case 'setup-database':
-        // Check if --interactive flag is provided
-        if (args.includes('--interactive')) {
-            console.log('🚀 Starting interactive database setup...\n');
-            executeScript(join(__dirname, '..', 'scripts', 'setup-database.js'), args.slice(1));
-        } else {
-            console.log('🚀 Starting simple database setup (non-interactive)...\n');
-            executeScript(join(__dirname, '..', 'scripts', 'simple-setup.js'), args.slice(1));
-        }
-        break;
-
-    case 'generate-sample-data':
-        // Check if --legacy flag is provided for old fake data
-        if (args.includes('--legacy')) {
-            console.log('🎲 Starting legacy sample data generation...\n');
-            executeScript(join(__dirname, '..', 'scripts', 'generate-sample-data.js'), args.slice(1));
-        } else {
-            console.log('📚 Initializing with REAL Context Engineering templates...\n');
-            executeScript(join(__dirname, '..', 'scripts', 'initialize-real-data.js'), args.slice(1));
-        }
-        break;
-
-    case 'generate-prp':
-        console.log('🧠 Generating MongoDB-powered PRP with context intelligence...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'generate-prp.js'), args.slice(1));
-        break;
-
-    case 'execute-prp':
-        console.log('⚡ Executing PRP with validation loops and learning...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'execute-prp.js'), args.slice(1));
-        break;
-
-    case 'create-feature':
-        console.log('✨ Creating feature request template...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'create-feature.js'), args.slice(1));
+    case 'mcp-setup':
+        console.log('🚀 Starting revolutionary MCP setup...\n');
+        executeScript(join(__dirname, '..', 'scripts', 'mcp-setup.js'), args.slice(1));
         break;
 
     case 'help':
