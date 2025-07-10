@@ -44,7 +44,7 @@ To add new patterns:
 1. Create pattern files in appropriate subdirectories
 2. Include comprehensive documentation
 3. Add success metrics and usage examples
-4. Run `mcp-context-engineering generate-sample-data` to index new patterns
+4. Patterns are automatically indexed in MongoDB on first use
 
 ## Adding Your Own Patterns
 

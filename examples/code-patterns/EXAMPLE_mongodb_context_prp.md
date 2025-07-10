@@ -53,8 +53,8 @@ A universal MCP server where:
 - file: src/index.ts
   why: Complete MCP server implementation with MongoDB integration
   
-- file: scripts/setup-database.js
-  why: MongoDB Atlas setup and vector index creation
+- file: src/index.ts
+  why: Automatic MongoDB setup and vector index creation
   
 - file: examples/mcp-configs/
   why: Universal AI assistant configuration examples
@@ -64,17 +64,14 @@ A universal MCP server where:
 ```bash
 .
 ├── src/
-│   └── index.ts                 # Complete MCP server with MongoDB tools
-├── scripts/
-│   ├── setup-database.js       # Interactive MongoDB setup
-│   ├── generate-sample-data.js # Sample pattern generation
-│   ├── create-feature.js       # Feature request creator
-│   ├── generate-prp.js         # PRP generation script
-│   └── execute-prp.js          # PRP execution script
+│   ├── index.ts                # Complete MCP server with MongoDB tools
+│   └── cli.ts                  # Simple CLI wrapper
 ├── examples/
 │   ├── mcp-configs/            # AI assistant configurations
 │   └── code-patterns/          # Implementation examples
-├── UNIVERSAL_AI_RULES.md       # Global AI assistant rules
+├── docs/
+│   └── CORRECT_MCP_WORKFLOW.md # Complete workflow documentation
+├── templates/                  # PRP templates
 └── package.json               # MCP server package configuration
 ```
 
