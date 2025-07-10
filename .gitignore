@@ -60,3 +60,18 @@ scripts/safe-cleanup.js
 
 # Internal documentation (keep local only)
 docs/internal/
+
+# PLANNING AND INTERNAL FILES (VERSION 3.0 CLEANUP)
+planning/
+original_version_refrance_only/
+MONGODB_MCP_VALIDATION_REPORT.md
+FULL_CONTEXT_FOR_NEW_CHAT_SESSION.md
+CLEANUP_SUMMARY.md
+demo-transcript.md
+next-chat-system-prompt-fix-issues-before-prod.md
+
+# Testing and development artifacts
+*.test.js
+*.spec.js
+test-results/
+benchmark/
