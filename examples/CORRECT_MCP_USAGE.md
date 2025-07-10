@@ -4,19 +4,19 @@
 
 This example shows the **correct way** to use MCP Context Engineering with any AI assistant.
 
-## ❌ WRONG: Trying to Use CLI Commands Directly
+## ❌ WRONG: CLI Commands Don't Exist
 
 ```bash
-# This is WRONG - these scripts cannot search codebases or generate comprehensive PRPs
-mcp-context-engineering generate-prp "user authentication system"
-mcp-context-engineering execute-prp PRPs/auth-system.md
+# These commands DO NOT EXIST - the AI assistant handles everything!
+mcp-context-engineering generate-prp "user authentication system"  # WRONG!
+mcp-context-engineering execute-prp PRPs/auth-system.md           # WRONG!
 ```
 
 **Why this fails:**
-- Scripts have no access to your codebase
-- Scripts cannot search the web
-- Scripts cannot implement code
-- Only AI assistants can orchestrate the complete workflow
+- There are no CLI commands for generating PRPs
+- The MCP server provides tools that AI assistants call
+- You interact through natural language, not commands
+- The AI orchestrates the complete workflow
 
 ## ✅ CORRECT: Natural Conversation with AI Assistant
 
@@ -181,14 +181,9 @@ mcp-context-engineering --version
 ```
 
 ### "MongoDB connection failed"
-```bash
-# Set up environment variables
-export MDB_MCP_CONNECTION_STRING="mongodb+srv://..."
-export MDB_MCP_OPENAI_API_KEY="sk-..."
-
-# Test connection
-mcp-context-engineering setup-database
-```
+- Ensure your MongoDB connection string is correct in the MCP configuration
+- Check that MongoDB is accessible from your network
+- Verify your OpenAI API key is valid
 
 ### "AI not calling MCP tools"
 - Ensure MCP is properly configured in your AI assistant

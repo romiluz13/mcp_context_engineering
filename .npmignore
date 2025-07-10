@@ -13,28 +13,9 @@ tsconfig.json
 # Internal documentation and planning
 archive-*/
 planning/
-next-chat-system-prompt.md
+next-chat-system-prompt-fix-issues-before-prod.md
 demo-transcript.md
 install.sh
-TRANSFORMATION_*.md
-FINAL_ANALYSIS_*.md
-INDUSTRY_SHOCKING_*.md
-NEW_CHAT_*.md
-MCP_TOOLS_EXPLANATION.md
-README-FIXED.md
-PRODUCTION_STRUCTURE.md
-context-engineering-intro-referance/
-docs/internal/
-docs/UNIVERSAL_AI_RULES.md
-
-# Development scripts (keep only essential ones)
-scripts/safe-cleanup.js
-scripts/test-setup.js
-scripts/create-feature.js
-scripts/generate-prp.js
-scripts/initialize-real-data.js
-scripts/setup-database.js
-scripts/generate-prp-fixed.js
 
 # IDE and OS files
 .vscode/
@@ -66,9 +47,7 @@ tests/
 .env*
 
 # Non-essential examples and templates
-examples/CORRECT_MCP_USAGE.md
 examples/WORKFLOW_COMPARISON.md
-examples/code-patterns/
 examples/implementations/
 templates/
 
@@ -85,10 +64,9 @@ node_modules/
 # Keep only these essential files for npm:
 # - dist/ (compiled code)
 # - examples/mcp-configs/ (configuration examples)
-# - scripts/simple-setup.js (database setup)
-# - scripts/generate-sample-data.js (sample data)
-# - scripts/setup-memory-bank-collections.js (memory bank setup)
+# - examples/CORRECT_MCP_USAGE.md (usage guide)
+# - examples/code-patterns/README.md (pattern examples)
+# - docs/CORRECT_MCP_WORKFLOW.md (workflow documentation)
 # - package.json
 # - README.md
 # - LICENSE
-# - docs/CORRECT_MCP_WORKFLOW.md

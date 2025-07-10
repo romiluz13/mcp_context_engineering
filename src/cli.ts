@@ -3,8 +3,8 @@
 /**
  * MCP Context Engineering Platform - CLI Interface
  * 
- * Handles command-line operations like setup-database, generate-sample-data, etc.
- * When no command is provided, starts the MCP server.
+ * This CLI is a lightweight wrapper. Its primary purpose is to start the 
+ * MCP server, which is then used by AI assistants.
  */
 
 import { spawn } from 'child_process';
@@ -50,51 +50,47 @@ function startMcpServer() {
  */
 function showHelp() {
     console.log(`
-🚀 MCP Context Engineering Platform CLI
+🚀 MCP Context Engineering Platform
+
+OVERVIEW:
+  This is an MCP (Model Context Protocol) server that provides MongoDB-based
+  collaborative intelligence to AI coding assistants like Cursor and Claude.
+
+  Setup is automatic - no manual configuration needed!
 
 USAGE:
-  mcp-context-engineering [command] [options]
+  mcp-context-engineering [command]
 
 COMMANDS:
-  mcp-setup                Revolutionary one-time setup (creates MongoDB collections)
-  help                     Show this help message
+  help         Show this help message
+  version      Show version information
+  
+  (no command) Start the MCP server for AI assistant integration
 
-  (no command)             Start the MCP server for AI assistant integration
+⚡ HOW IT WORKS:
+  1. Install the package globally: npm install -g mcp-context-engineering
+  2. Configure your AI assistant with your MongoDB and OpenAI credentials
+  3. Use natural language: "Help me build [feature] using MongoDB Context Engineering"
+  4. The server automatically creates all necessary database collections on first use
 
-🚀 RECOMMENDED WORKFLOW (MongoDB Context Engineering):
-  1. Configure MCP in your AI assistant (see examples/mcp-configs/)
-  2. Ask AI: "Help me research patterns for [your feature]"
-  3. AI calls: context-research (MongoDB intelligence)
-  4. AI calls: context-assemble-prp (sophisticated PRP generation)
-  5. Follow the generated PRP with validation loops
+✅ NO MANUAL SETUP NEEDED!
+  The database, collections, and indexes are created automatically when you first
+  use the MCP tools through your AI assistant.
 
-💡 This approach provides superior intelligence vs traditional context engineering!
-
-EXAMPLES:
-  mcp-context-engineering mcp-setup
-  mcp-context-engineering
-  mcp-context-engineering generate-prp feature-request.md
-  mcp-context-engineering execute-prp PRPs/feature-name.md
-  mcp-context-engineering
-
-ENVIRONMENT VARIABLES:
-  MDB_MCP_CONNECTION_STRING    MongoDB Atlas connection string
-  MDB_MCP_OPENAI_API_KEY       OpenAI API key for embeddings
+CONFIGURATION:
+  Add to your AI assistant's MCP configuration:
+  • MDB_MCP_CONNECTION_STRING - Your MongoDB connection string
+  • MDB_MCP_OPENAI_API_KEY - Your OpenAI API key
 
 DOCUMENTATION:
   https://github.com/romiluz13/mcp_context_engineering
 
-🌟 Transform static context into dynamic, intelligent, collaborative intelligence!
+💡 Transform static prompts into dynamic, learning, collaborative intelligence!
 `);
 }
 
 // Handle commands
 switch (command) {
-    case 'mcp-setup':
-        console.log('🚀 Starting revolutionary MCP setup...\n');
-        executeScript(join(__dirname, '..', 'scripts', 'mcp-setup.js'), args.slice(1));
-        break;
-
     case 'help':
     case '--help':
     case '-h':
@@ -104,7 +100,7 @@ switch (command) {
     case 'version':
     case '--version':
     case '-v':
-        console.log('2.2.0');
+        console.log('2.3.0');
         break;
 
     case undefined:

@@ -30,7 +30,6 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
-    "mcp-setup": "node scripts/mcp-setup.js",
     "clean": "rm -rf dist",
     "prepare": "npm run build"
   },
@@ -50,7 +49,6 @@
   },
   "files": [
     "dist/**/*",
-    "scripts/mcp-setup.js",
     "examples/mcp-configs/**/*",
     "docs/CORRECT_MCP_WORKFLOW.md",
     "README.md",

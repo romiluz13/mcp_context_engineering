@@ -573,7 +573,7 @@ server.registerTool(
 
       // If no data found, provide helpful fallback guidance
       if (patterns.length === 0 && rules.length === 0 && research.length === 0) {
-        console.log("ℹ️  No patterns found in database. Consider running: mcp-context-engineering generate-sample-data");
+        console.log("ℹ️  No patterns found in database. Patterns will be added as you use the system.");
       }
 
       // Calculate comprehensive summary

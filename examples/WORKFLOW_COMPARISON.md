@@ -1,4 +1,4 @@
-# 🔄 Context Engineering Workflow Comparison
+# 🔄 Workflow Comparison
 
 ## Original vs MCP Enhanced Approach
 
@@ -57,16 +57,14 @@ npm install -g mcp-context-engineering
     "context-engineering": {
       "command": "mcp-context-engineering",
       "env": {
-        "MDB_MCP_CONNECTION_STRING": "your-mongodb-connection",
-        "MDB_MCP_OPENAI_API_KEY": "your-openai-key"
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://...",
+        "MDB_MCP_OPENAI_API_KEY": "sk-..."
       }
     }
   }
 }
 
-# 3. Setup MongoDB patterns database
-mcp-context-engineering setup-database
-```
+**Database setup happens automatically on first use!**
 
 ### Execution (Natural Conversation)
 ```
@@ -95,6 +93,15 @@ AI Assistant: I'll help you build that! Let me start by researching proven patte
 → Runs tests and fixes issues
 → Ensures all success criteria met
 ```
+
+### Personal Pattern Intelligence
+```
+1. Install: npm install -g mcp-context-engineering
+2. Configure in AI assistant (as shown above)
+3. Use: "Help me build X using MongoDB Context Engineering"
+```
+
+**No manual setup needed - database initializes automatically!**
 
 ## 🎯 Key Improvements in MCP Version
 
@@ -165,8 +172,7 @@ User → Any AI Assistant → MCP Tools → MongoDB Intelligence → Enhanced Te
    # Configure in your AI assistant
    # (See setup examples in examples/mcp-configs/)
    
-   # Initialize MongoDB patterns
-   mcp-context-engineering setup-database
+   # That's it! Database initializes automatically on first use
    ```
 
 ## 🎉 Result: Best of Both Worlds

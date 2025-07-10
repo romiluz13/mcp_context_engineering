@@ -1,4 +1,4 @@
-# 📚 Code Patterns Examples
+# Code Pattern Examples
 
 This directory contains code patterns and examples that are referenced in PRP templates and used by the MongoDB Context Engineering Platform for pattern discovery and implementation guidance.
 
@@ -45,6 +45,17 @@ To add new patterns:
 2. Include comprehensive documentation
 3. Add success metrics and usage examples
 4. Run `mcp-context-engineering generate-sample-data` to index new patterns
+
+## Adding Your Own Patterns
+
+To contribute your successful patterns:
+
+1. Create a new markdown file following the naming convention
+2. Use the template structure shown in examples
+3. Include real metrics and gotchas from your experience
+4. Submit a pull request with your pattern
+
+Your patterns will automatically be available to the community through the MongoDB Context Engineering platform!
 
 ---
 
