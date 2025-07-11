@@ -5,6 +5,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { MongoClient } from "mongodb";
 import OpenAI from "openai";
+import { VoyageAIClient } from "voyageai";
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -156,11 +157,17 @@ const server = new McpServer(
 const config = {
   connectionString: process.env.MDB_MCP_CONNECTION_STRING,
   openaiApiKey: process.env.MDB_MCP_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
+  voyageApiKey: process.env.MDB_MCP_VOYAGE_API_KEY || process.env.VOYAGE_API_KEY,
+  embeddingProvider: process.env.MDB_MCP_EMBEDDING_PROVIDER || "openai", // "openai" or "voyage"
+  voyageModel: process.env.MDB_MCP_VOYAGE_MODEL || "voyage-large-2-instruct", // voyage-large-2-instruct, voyage-code-2, voyage-2, voyage-large-2
+  openaiModel: process.env.MDB_MCP_OPENAI_EMBEDDING_MODEL || "text-embedding-3-small",
+  embeddingDimensions: parseInt(process.env.MDB_MCP_EMBEDDING_DIMENSIONS || "1536"),
 };
 
-// MongoDB client and OpenAI client
+// MongoDB client and embedding clients
 let mongoClient: MongoClient | null = null;
 let openaiClient: OpenAI | null = null;
+let voyageClient: VoyageAIClient | null = null;
 
 // Load Universal AI Rules
 function loadUniversalRules(): string {
@@ -271,6 +278,10 @@ server.registerResource(
         ],
         mongodb_connected: !!mongoClient,
         openai_configured: !!config.openaiApiKey,
+        voyage_configured: !!config.voyageApiKey,
+        embedding_provider: config.embeddingProvider,
+        embedding_model: config.embeddingProvider === "openai" ? config.openaiModel : config.voyageModel,
+        embedding_dimensions: config.embeddingDimensions,
         status: "ready"
       }, null, 2)
     }]
@@ -372,6 +383,16 @@ async function initializeClients() {
     });
   }
 
+  // Initialize Voyage client if using Voyage embeddings
+  if (config.embeddingProvider === "voyage" && !voyageClient) {
+    if (!config.voyageApiKey) {
+      throw new Error("MDB_MCP_VOYAGE_API_KEY or VOYAGE_API_KEY environment variable is required when using Voyage embeddings");
+    }
+    voyageClient = new VoyageAIClient({
+      apiKey: config.voyageApiKey,
+    });
+  }
+
   return { mongoClient, openaiClient };
 }
 
@@ -468,24 +489,94 @@ async function enhanceDatabaseIndexes(db: any) {
   }
 }
 
-// Generate embeddings using OpenAI
-async function generateEmbedding(text: string): Promise<number[]> {
-  const { openaiClient } = await initializeClients();
+// Generate embeddings using configured provider (OpenAI or Voyage)
+async function generateEmbedding(text: string, inputType: "query" | "document" = "document"): Promise<number[]> {
+  await initializeClients();
   
   try {
-    const response = await openaiClient.embeddings.create({
-      model: "text-embedding-3-small",
-      input: text,
-      dimensions: 1536,
-    });
+    if (config.embeddingProvider === "voyage") {
+      // Use Voyage AI for embeddings
+      if (!voyageClient) {
+        throw new Error("Voyage client not initialized");
+      }
 
-    if (!response.data || response.data.length === 0) {
-      throw new Error("No embedding data returned from OpenAI");
+      // Add retry logic for robustness
+      let retries = 3;
+      let lastError: Error | null = null;
+      
+      while (retries > 0) {
+        try {
+          const response = await voyageClient.embed({
+            input: text,
+            model: config.voyageModel,
+            inputType: inputType, // Use the provided input type for better search
+          });
+
+          if (!response.data || response.data.length === 0) {
+            throw new Error("No embedding data returned from Voyage AI");
+          }
+
+          // Voyage returns embeddings in response.data[0].embedding
+          const embedding = response.data[0]?.embedding;
+          
+          if (!embedding) {
+            throw new Error("No embedding data in Voyage AI response");
+          }
+          
+          // Validate dimensions
+          if (embedding.length !== config.embeddingDimensions) {
+            console.warn(`Voyage embedding dimension mismatch: expected ${config.embeddingDimensions}, got ${embedding.length}`);
+          }
+
+          return embedding;
+        } catch (error) {
+          lastError = error as Error;
+          retries--;
+          if (retries > 0) {
+            // Wait before retry with exponential backoff
+            await new Promise(resolve => setTimeout(resolve, (3 - retries) * 1000));
+          }
+        }
+      }
+      
+      throw lastError || new Error("Failed to generate Voyage embedding after retries");
+    } else {
+      // Use OpenAI for embeddings (default)
+      if (!openaiClient) {
+        throw new Error("OpenAI client not initialized");
+      }
+
+      // Add retry logic for robustness
+      let retries = 3;
+      let lastError: Error | null = null;
+      
+      while (retries > 0) {
+        try {
+          const response = await openaiClient.embeddings.create({
+            model: config.openaiModel,
+            input: text,
+            dimensions: config.embeddingDimensions,
+          });
+
+          if (!response.data || response.data.length === 0) {
+            throw new Error("No embedding data returned from OpenAI");
+          }
+
+          return response.data[0]!.embedding;
+        } catch (error) {
+          lastError = error as Error;
+          retries--;
+          if (retries > 0) {
+            // Wait before retry with exponential backoff
+            await new Promise(resolve => setTimeout(resolve, (3 - retries) * 1000));
+          }
+        }
+      }
+      
+      throw lastError || new Error("Failed to generate OpenAI embedding after retries");
     }
-
-    return response.data[0]!.embedding;
   } catch (error) {
-    throw new Error(`Failed to generate embedding: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Failed to generate embedding with ${config.embeddingProvider}: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -753,8 +844,8 @@ server.registerTool(
       const success_rate_threshold = 0.7;
       const include_research = true;
 
-      // Generate embedding for semantic search
-      const queryEmbedding = await generateEmbedding(feature_request);
+      // Generate embedding for semantic search (use "query" type for better search results)
+      const queryEmbedding = await generateEmbedding(feature_request, "query");
 
       // Search for relevant patterns with advanced scoring
       const patterns = await searchPatterns(queryEmbedding, technology_stack, success_rate_threshold, max_results);
@@ -1110,8 +1201,8 @@ This is a **MANDATORY** step from the original Context Engineering methodology (
         };
       }
 
-      // Generate embedding for template matching
-      const queryEmbedding = await generateEmbedding(feature_request);
+      // Generate embedding for template matching (use "query" type for better matching)
+      const queryEmbedding = await generateEmbedding(feature_request, "query");
 
       // Find optimal template using advanced scoring
       // Handle both direct research results and nested summary structure
@@ -5204,7 +5295,7 @@ server.registerTool(
       let researchResults: any;
       try {
         // Simulate calling context-research tool
-        const queryEmbedding = await generateEmbedding(feature_request);
+        const queryEmbedding = await generateEmbedding(feature_request, "query");
         
         const [patterns, rules, research] = await Promise.all([
           searchPatterns(queryEmbedding, technology_stack, 0.7, 10),
@@ -5247,7 +5338,7 @@ server.registerTool(
       let prpResult: any;
       try {
         // Generate PRP using assembled context
-        const queryEmbedding = await generateEmbedding(feature_request);
+        const queryEmbedding = await generateEmbedding(feature_request, "query");
         const optimalTemplate = await findOptimalTemplate(queryEmbedding, [], researchResults.summary);
         const assembledContext = await assembleOptimalContext(researchResults, queryEmbedding, "intermediate");
         const prpContent = generateDynamicPRP(feature_request, optimalTemplate, assembledContext, "standard");

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "context-engineering-voyage": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "cwd": "/path/to/mcp_context_engineering",
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://username:password@cluster.mongodb.net/context_engineering",
+        "MDB_MCP_OPENAI_API_KEY": "sk-...",
+        "MDB_MCP_VOYAGE_API_KEY": "pa-...",
+        "MDB_MCP_EMBEDDING_PROVIDER": "voyage",
+        "MDB_MCP_VOYAGE_MODEL": "voyage-large-2-instruct",
+        "MDB_MCP_EMBEDDING_DIMENSIONS": "1024"
+      }
+    }
+  }
+} 

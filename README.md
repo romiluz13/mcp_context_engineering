@@ -145,7 +145,7 @@ interface PriorityItem {
 ### **Prerequisites**
 - **Node.js 18+** (for MCP server)
 - **MongoDB** (local or Atlas) with connection string
-- **OpenAI API Key** (for embeddings and AI features)
+- **OpenAI API Key** OR **Voyage AI API Key** (for embeddings and AI features)
 - **AI Coding Assistant** that supports MCP (Cursor, Claude Desktop, etc.)
 
 ### **Quick Setup**
@@ -155,7 +155,14 @@ npm install -g mcp-context-engineering
 
 # 2. Set environment variables
 export MDB_MCP_CONNECTION_STRING="mongodb://localhost:27017"
+
+# Option A: Use OpenAI embeddings (default)
 export MDB_MCP_OPENAI_API_KEY="your-openai-key"
+
+# Option B: Use Voyage AI embeddings
+export MDB_MCP_VOYAGE_API_KEY="your-voyage-key"
+export MDB_MCP_EMBEDDING_PROVIDER="voyage"
+export MDB_MCP_VOYAGE_MODEL="voyage-large-2-instruct"
 
 # 3. Add to your AI assistant's MCP config
 # (See configuration examples below)
@@ -194,6 +201,40 @@ Add to `claude-desktop-config.json`:
   }
 }
 ```
+
+---
+
+## 🔌 **Embedding Providers**
+
+### **OpenAI Embeddings (Default)**
+- **Model**: `text-embedding-3-small` (1536 dimensions)
+- **Alternative**: `text-embedding-3-large` (3072 dimensions)
+- **Best for**: General purpose text and code embeddings
+- **Configuration**:
+  ```bash
+  export MDB_MCP_OPENAI_API_KEY="sk-..."
+  export MDB_MCP_OPENAI_EMBEDDING_MODEL="text-embedding-3-small"
+  export MDB_MCP_EMBEDDING_DIMENSIONS="1536"
+  ```
+
+### **Voyage AI Embeddings**
+- **Models Available**:
+  - `voyage-large-2-instruct` (1024 dimensions) - Best for instructional content
+  - `voyage-code-2` (1536 dimensions) - Optimized for code
+  - `voyage-2` (1024 dimensions) - General purpose
+  - `voyage-large-2` (1536 dimensions) - High quality general purpose
+- **Best for**: Code-specific embeddings and instruction-following tasks
+- **Configuration**:
+  ```bash
+  export MDB_MCP_VOYAGE_API_KEY="pa-..."
+  export MDB_MCP_EMBEDDING_PROVIDER="voyage"
+  export MDB_MCP_VOYAGE_MODEL="voyage-code-2"  # For code-heavy projects
+  export MDB_MCP_EMBEDDING_DIMENSIONS="1536"
+  ```
+
+### **Choosing the Right Provider**
+- **Use OpenAI** when: You already have an OpenAI API key, need general-purpose embeddings
+- **Use Voyage** when: You want code-optimized embeddings, better instruction understanding, or cost-effective alternatives
 
 ---
 
@@ -416,6 +457,8 @@ Time Saved: Start coding immediately
 - ✅ **Digest Generation**: Automatic summarization for large projects
 - ✅ **Performance Optimization**: 50-75% faster response times
 - ✅ **Production Ready**: Enhanced indexing and connection pooling
+- ✅ **Voyage AI Support**: Alternative embedding provider with code-optimized models
+- ✅ **Smart Embeddings**: Query vs document embeddings for better search results
 
 ### **Breaking Changes:**
 - **None!** Perfect backward compatibility maintained
