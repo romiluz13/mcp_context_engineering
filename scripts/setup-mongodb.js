@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { MongoClient } from 'mongodb';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { homedir } from 'os';
@@ -9,7 +9,7 @@ import { homedir } from 'os';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Local MongoDB connection
+// Default configurations
 const LOCAL_MONGODB_URI = 'mongodb://localhost:27017';
 const DB_NAME = 'context_engineering';
 
@@ -26,15 +26,19 @@ const REQUIRED_COLLECTIONS = [
   'memory_patterns'
 ];
 
-async function setupLocalMongoDB() {
-  console.log('🚀 Setting up local MongoDB for Context Engineering...\n');
+async function setupMongoDB(connectionString) {
+  console.log('🚀 Setting up MongoDB for Context Engineering...\n');
 
-  const client = new MongoClient(LOCAL_MONGODB_URI);
+  const client = new MongoClient(connectionString);
   
   try {
     // Connect to MongoDB
     await client.connect();
-    console.log('✅ Connected to local MongoDB');
+    console.log('✅ Connected to MongoDB');
+    
+    // Determine if it's Atlas or local
+    const isAtlas = connectionString.includes('mongodb+srv://') || connectionString.includes('mongodb.net');
+    console.log(`📍 Using ${isAtlas ? 'MongoDB Atlas' : 'Local MongoDB'}`);
 
     // Get database
     const db = client.db(DB_NAME);
@@ -111,60 +115,55 @@ async function setupLocalMongoDB() {
       }
     }
 
-    // Create MCP configuration file
-    console.log('\n⚙️  Creating MCP configuration...');
-    
-    const mcpConfig = {
-      mcpServers: {
-        "mcp-context-engineering": {
-          command: "mcp-context-engineering",
-          env: {
-            MDB_MCP_CONNECTION_STRING: `${LOCAL_MONGODB_URI}/${DB_NAME}`,
-            MDB_MCP_OPENAI_API_KEY: process.env.OPENAI_API_KEY || "your-openai-api-key-here"
-          }
-        }
-      }
-    };
-
-    const configPath = join(homedir(), '.config', 'mcp', 'mcp.json');
-    const configDir = dirname(configPath);
-
-    // Create directory if it doesn't exist
-    if (!existsSync(configDir)) {
-      const { mkdirSync } = await import('fs');
-      mkdirSync(configDir, { recursive: true });
-      console.log(`  ✅ Created config directory: ${configDir}`);
-    }
-
-    // Write configuration
-    writeFileSync(configPath, JSON.stringify(mcpConfig, null, 2));
-    console.log(`  ✅ Created MCP config at: ${configPath}`);
-
     // Show summary
     console.log('\n🎉 Setup complete!\n');
     console.log('📋 Summary:');
     console.log(`  - Database: ${DB_NAME}`);
-    console.log(`  - Collections: ${REQUIRED_COLLECTIONS.length} created`);
-    console.log(`  - Connection: ${LOCAL_MONGODB_URI}/${DB_NAME}`);
-    console.log(`  - MCP Config: ${configPath}`);
+    console.log(`  - Collections: ${REQUIRED_COLLECTIONS.length} created/verified`);
+    console.log(`  - Connection: ${isAtlas ? 'MongoDB Atlas' : 'Local MongoDB'}`);
+    
+    if (isAtlas) {
+      console.log('\n⚠️  MongoDB Atlas Notes:');
+      console.log('  - Make sure your IP address is whitelisted in Atlas');
+      console.log('  - Vector search indexes must be created manually in Atlas UI');
+      console.log('  - See docs/vector-search-setup.md for Atlas vector search setup');
+    }
     
     console.log('\n🔧 Next steps:');
-    console.log('  1. Make sure you have your OpenAI API key set');
-    console.log('  2. Restart Cursor to load the new MCP configuration');
-    console.log('  3. Use "memory-bank-initialize" to create your first project memory bank');
-    
-    if (!process.env.OPENAI_API_KEY) {
-      console.log('\n⚠️  Warning: OPENAI_API_KEY not found in environment');
-      console.log('  Please edit the MCP config file and add your OpenAI API key');
-    }
+    console.log('  1. Make sure your MCP configuration has the correct connection string');
+    console.log('  2. Ensure your OpenAI API key is set in the MCP config');
+    console.log('  3. Restart Cursor/Claude Desktop to load the configuration');
+    console.log('  4. Use "memory-bank-initialize" to create your first project memory bank');
 
   } catch (error) {
     console.error('❌ Setup failed:', error);
+    if (error.message.includes('Server selection timed out')) {
+      console.error('\n💡 Connection timeout - possible causes:');
+      console.error('  - For Atlas: Your IP address may not be whitelisted');
+      console.error('  - For local: MongoDB service may not be running');
+      console.error('  - Network connectivity issues');
+    }
     process.exit(1);
   } finally {
     await client.close();
   }
 }
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+let connectionString = LOCAL_MONGODB_URI;
+
+// Check for connection string argument
+if (args.length > 0 && args[0].startsWith('mongodb')) {
+  connectionString = args[0];
+} else if (process.env.MDB_MCP_CONNECTION_STRING) {
+  connectionString = process.env.MDB_MCP_CONNECTION_STRING;
+} else {
+  console.log('📌 No connection string provided, using local MongoDB');
+  console.log('   To use MongoDB Atlas, run:');
+  console.log('   node scripts/setup-local-mongodb.js "mongodb+srv://..."');
+  console.log('');
+}
+
 // Run setup
-setupLocalMongoDB().catch(console.error); 
+setupMongoDB(connectionString).catch(console.error); 

@@ -224,13 +224,13 @@ npm install -g mcp-context-engineering
 # 2. Clone repo and run setup script
 git clone https://github.com/Ejb503/mcp-context-engineering.git
 cd mcp-context-engineering
-node scripts/setup-local-mongodb.js
+node scripts/setup-mongodb.js
 
-# 3. Add your OpenAI API key to ~/.config/mcp/mcp.json
+# 3. Add your OpenAI API key to your MCP config
 # 4. Restart Cursor/Claude Desktop
 ```
 
-See [Local MongoDB Setup Guide](docs/LOCAL_MONGODB_SETUP_GUIDE.md) for detailed instructions.
+See [MongoDB Connection Guide](docs/MONGODB_CONNECTION_GUIDE.md) for detailed setup instructions.
 
 #### **Option 2: Manual Setup**
 ```bash
