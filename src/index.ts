@@ -5474,3 +5474,259 @@ server.registerTool(
   }
 );
 
+// 🏥 HEALTH CHECK TOOL - SYSTEM STATUS VERIFICATION
+
+const healthCheckSchema = {
+  detailed: z.boolean().optional().default(false).describe("Include detailed system information"),
+  check_mongodb: z.boolean().optional().default(true).describe("Check MongoDB connection"),
+  check_embedding_providers: z.boolean().optional().default(true).describe("Check embedding provider connections")
+};
+
+server.registerTool(
+  "health-check",
+  {
+    title: "Health Check",
+    description: `🏥 **SYSTEM HEALTH CHECK**
+
+**PURPOSE:** Verify MCP Context Engineering system is working properly.
+
+**FEATURES:**
+- MongoDB connection status
+- Embedding provider status (OpenAI/Voyage)
+- System configuration validation
+- Performance metrics
+- Memory bank status
+
+**USAGE:** Quick system verification and diagnostics.`,
+    inputSchema: healthCheckSchema,
+  },
+  async (args) => {
+    try {
+      const startTime = Date.now();
+      const results = {
+        timestamp: new Date().toISOString(),
+        system_status: "healthy",
+        checks: [] as any[],
+        performance: {
+          response_time_ms: 0,
+          memory_usage_mb: 0
+        },
+        configuration: {
+          embedding_provider: config.embeddingProvider,
+          embedding_model: config.embeddingProvider === "openai" ? config.openaiModel : config.voyageModel,
+          embedding_dimensions: config.embeddingDimensions
+        }
+      };
+
+      // Check MongoDB connection
+      if (args.check_mongodb) {
+        try {
+          if (!mongoClient) {
+            results.checks.push({
+              name: "MongoDB Connection",
+              status: "error",
+              message: "MongoDB client not initialized"
+            });
+            results.system_status = "degraded";
+          } else {
+            // Test MongoDB connection with a simple ping
+            await mongoClient.db('admin').command({ ping: 1 });
+            
+            // Check if context engineering database exists
+            const db = mongoClient.db('context_engineering');
+            const collections = await db.listCollections().toArray();
+            
+            results.checks.push({
+              name: "MongoDB Connection",
+              status: "healthy",
+              message: "Connected successfully",
+              details: args.detailed ? {
+                database: "context_engineering",
+                collections_count: collections.length,
+                collections: collections.map(c => c.name)
+              } : undefined
+            });
+          }
+        } catch (error) {
+          results.checks.push({
+            name: "MongoDB Connection",
+            status: "error",
+            message: error instanceof Error ? error.message : String(error)
+          });
+          results.system_status = "unhealthy";
+        }
+      }
+
+      // Check embedding providers
+      if (args.check_embedding_providers) {
+        // Check OpenAI
+        if (config.openaiApiKey) {
+          try {
+            if (!openaiClient) {
+              results.checks.push({
+                name: "OpenAI Client",
+                status: "warning",
+                message: "OpenAI client not initialized"
+              });
+            } else {
+              // Test with a simple embedding request
+              const testEmbedding = await openaiClient.embeddings.create({
+                model: config.openaiModel,
+                input: "health check test"
+              });
+              
+              results.checks.push({
+                name: "OpenAI Embedding",
+                status: "healthy",
+                message: "API responding correctly",
+                details: args.detailed ? {
+                  model: config.openaiModel,
+                  dimensions: testEmbedding.data[0].embedding.length
+                } : undefined
+              });
+            }
+          } catch (error) {
+            results.checks.push({
+              name: "OpenAI Embedding",
+              status: "error",
+              message: error instanceof Error ? error.message : String(error)
+            });
+            if (config.embeddingProvider === "openai") {
+              results.system_status = "unhealthy";
+            }
+          }
+        }
+
+        // Check Voyage AI
+        if (config.voyageApiKey) {
+          try {
+            if (!voyageClient) {
+              results.checks.push({
+                name: "Voyage AI Client",
+                status: "warning",
+                message: "Voyage AI client not initialized"
+              });
+            } else {
+              // Test with a simple embedding request
+              const testEmbedding = await voyageClient.embed({
+                model: config.voyageModel,
+                input: ["health check test"]
+              });
+              
+              results.checks.push({
+                name: "Voyage AI Embedding",
+                status: "healthy",
+                message: "API responding correctly",
+                details: args.detailed ? {
+                  model: config.voyageModel,
+                  dimensions: Array.isArray(testEmbedding.data?.[0]) ? testEmbedding.data[0].length : config.embeddingDimensions
+                } : undefined
+              });
+            }
+          } catch (error) {
+            results.checks.push({
+              name: "Voyage AI Embedding",
+              status: "error",
+              message: error instanceof Error ? error.message : String(error)
+            });
+            if (config.embeddingProvider === "voyage") {
+              results.system_status = "unhealthy";
+            }
+          }
+        }
+      }
+
+      // Performance metrics
+      const endTime = Date.now();
+      results.performance.response_time_ms = endTime - startTime;
+      results.performance.memory_usage_mb = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+
+      // Determine overall system status
+      const errorCount = results.checks.filter(c => c.status === "error").length;
+      const warningCount = results.checks.filter(c => c.status === "warning").length;
+      
+      if (errorCount > 0) {
+        results.system_status = "unhealthy";
+      } else if (warningCount > 0) {
+        results.system_status = "degraded";
+      } else {
+        results.system_status = "healthy";
+      }
+
+      // Format response
+      const statusEmoji = results.system_status === "healthy" ? "✅" : 
+                         results.system_status === "degraded" ? "⚠️" : "❌";
+      
+      return {
+        content: [{
+          type: "text",
+          text: `# ${statusEmoji} MCP Context Engineering Health Check
+
+**Overall Status:** ${results.system_status.toUpperCase()}
+**Timestamp:** ${results.timestamp}
+**Response Time:** ${results.performance.response_time_ms}ms
+**Memory Usage:** ${results.performance.memory_usage_mb}MB
+
+## 🔍 System Checks
+
+${results.checks.map(check => {
+  const checkEmoji = check.status === "healthy" ? "✅" : 
+                    check.status === "warning" ? "⚠️" : "❌";
+  return `### ${checkEmoji} ${check.name}
+**Status:** ${check.status}
+**Message:** ${check.message}${check.details ? `
+**Details:** ${JSON.stringify(check.details, null, 2)}` : ''}`;
+}).join('\n\n')}
+
+## ⚙️ Configuration
+
+**Embedding Provider:** ${results.configuration.embedding_provider}
+**Embedding Model:** ${results.configuration.embedding_model}
+**Embedding Dimensions:** ${results.configuration.embedding_dimensions}
+
+## 📊 Performance Metrics
+
+- **Response Time:** ${results.performance.response_time_ms}ms
+- **Memory Usage:** ${results.performance.memory_usage_mb}MB
+- **System Status:** ${results.system_status}
+
+${results.system_status === "healthy" ? 
+  "🎉 **All systems operational!** The MCP Context Engineering platform is ready to use." :
+  results.system_status === "degraded" ?
+  "⚠️ **System partially operational.** Some features may be limited." :
+  "❌ **System issues detected.** Please check configuration and connectivity."
+}
+
+## 💡 Next Steps
+
+${results.system_status === "healthy" ? 
+  "- Try: `context-research` to search for implementation patterns\n- Try: `memory-bank-initialize` to set up project context\n- Try: `context-engineering-flow` for complete feature implementation" :
+  "- Check MongoDB connection string and credentials\n- Verify embedding provider API keys\n- Review system logs for detailed error information"
+}`
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{
+          type: "text",
+          text: `❌ **Health Check Failed**
+
+**Error:** ${error instanceof Error ? error.message : String(error)}
+
+**Troubleshooting:**
+1. Check MongoDB connection string (MDB_MCP_CONNECTION_STRING)
+2. Verify embedding provider API keys
+3. Ensure all required environment variables are set
+4. Check network connectivity
+
+**Environment Variables Required:**
+- MDB_MCP_CONNECTION_STRING
+- MDB_MCP_OPENAI_API_KEY or OPENAI_API_KEY
+- MDB_MCP_VOYAGE_API_KEY or VOYAGE_API_KEY (optional)`
+        }],
+        isError: true
+      };
+    }
+  }
+);
+

@@ -1,7 +1,7 @@
 {
   "name": "mcp-context-engineering",
   "description": "Persistent memory banks and collaborative intelligence for AI coding assistants",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "type": "module",
   "main": "dist/index.js",
   "author": "Rom Iluz <rom@iluz.net>",

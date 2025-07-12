@@ -140,6 +140,72 @@ interface PriorityItem {
 
 ---
 
+## 🏥 **Health Check & Diagnostics**
+
+### **System Health Verification**
+The platform includes a comprehensive health check tool to verify all components are working correctly:
+
+```bash
+# Basic health check
+health-check
+
+# Detailed system diagnostics
+health-check --detailed=true
+
+# Check specific components
+health-check --check_mongodb=true --check_embedding_providers=true
+```
+
+### **Health Check Features**
+- **MongoDB Connection**: Verifies database connectivity and collections
+- **Embedding Providers**: Tests OpenAI/Voyage AI API connections
+- **System Configuration**: Validates all environment variables
+- **Performance Metrics**: Response time and memory usage
+- **Troubleshooting**: Detailed error messages and solutions
+
+### **Example Health Check Output**
+```
+✅ MCP Context Engineering Health Check
+
+Overall Status: HEALTHY
+Timestamp: 2025-01-12T10:30:00.000Z
+Response Time: 45ms
+Memory Usage: 128MB
+
+🔍 System Checks
+
+✅ MongoDB Connection
+Status: healthy
+Message: Connected successfully
+Details: {
+  "database": "context_engineering",
+  "collections_count": 8,
+  "collections": ["memory_banks", "patterns", "rules", "research", ...]
+}
+
+✅ OpenAI Embedding
+Status: healthy
+Message: API responding correctly
+Details: {
+  "model": "text-embedding-3-small",
+  "dimensions": 1536
+}
+
+⚙️ Configuration
+Embedding Provider: openai
+Embedding Model: text-embedding-3-small
+Embedding Dimensions: 1536
+
+🎉 All systems operational! The MCP Context Engineering platform is ready to use.
+
+💡 Next Steps
+- Try: context-research to search for implementation patterns
+- Try: memory-bank-initialize to set up project context
+- Try: context-engineering-flow for complete feature implementation
+```
+
+---
+
 ## 🛠️ **Installation & Setup**
 
 ### **Prerequisites**
